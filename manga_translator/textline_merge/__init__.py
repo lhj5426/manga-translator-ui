@@ -404,9 +404,15 @@ def merge_bboxes_text_region(bboxes: List[Quadrilateral], width, height, debug=F
     # step 2: postprocess - further split each region
     region_indices: List[Set[int]] = []
     connected_components = list(nx.algorithms.components.connected_components(G))
+    
+    gamma = 0.8
+    sigma = 2.5
+    if config and hasattr(config, 'ocr'):
+        gamma = getattr(config.ocr, 'merge_gamma', 0.8)
+        sigma = getattr(config.ocr, 'merge_sigma', 2.5)
 
     for node_set in connected_components:
-         split_result = split_text_region(bboxes, node_set, width, height, debug=debug)
+         split_result = split_text_region(bboxes, node_set, width, height, gamma=gamma, sigma=sigma, debug=debug)
          region_indices.extend(split_result)
 
     # step 3: return regions

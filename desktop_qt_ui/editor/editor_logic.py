@@ -97,10 +97,13 @@ class EditorLogic(QObject):
         files_to_add = []
         
         try:
+            read_all_subfolders = bool(
+                getattr(self.config_service.get_config().app, "read_all_subfolders", True)
+            )
             for root, dirs, files in os.walk(folder_path):
-                # 跳过 manga_translator_work 目录
-                if 'manga_translator_work' in root:
-                    continue
+                dirs[:] = [d for d in dirs if d.lower() != 'manga_translator_work']
+                if not read_all_subfolders:
+                    dirs[:] = []
                     
                 for f in sorted(files):
                     if os.path.splitext(f)[1].lower() in image_extensions:
@@ -311,4 +314,3 @@ class EditorLogic(QObject):
             self.logger.warning(f"未翻译的图片: {resolved_path}")
 
         self.controller.load_image_and_regions(resolved_path)
-

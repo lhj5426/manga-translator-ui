@@ -10,7 +10,7 @@ import numpy as np
 import torch
 from editor.commands import MaskEditCommand, UpdateRegionCommand
 from PIL import Image
-from PyQt6.QtCore import QObject, pyqtSignal, pyqtSlot
+from PyQt6.QtCore import QObject, QTimer, pyqtSignal, pyqtSlot
 from services import (
     get_async_service,
     get_config_service,
@@ -22,8 +22,6 @@ from services import (
     get_resource_manager,
     get_translation_service,
 )
-from widgets.themed_message_box import apply_message_box_style
-
 from manga_translator.utils import open_pil_image
 
 from .editor_model import EditorModel
@@ -84,6 +82,13 @@ class EditorController(QObject):
         
         # 上次导出时的状态快照（用于检测是否有更改）
         self._last_export_snapshot = None
+        self._auto_save_timer = QTimer(self)
+        self._auto_save_timer.setSingleShot(True)
+        self._auto_save_timer.setInterval(120)
+        self._auto_save_timer.timeout.connect(self._auto_save_json_silent)
+        self._auto_save_suspended = False
+        self._document_ready_for_autosave = False
+        self._editor_dirty = False
 
         # Connect internal signals for thread-safe updates
         self._update_refined_mask.connect(self.model.set_refined_mask)
@@ -145,6 +150,23 @@ class EditorController(QObject):
             return [r.data for r in resources]
         # 向后兼容
         return self.model.get_regions()
+
+    def _set_auto_save_suspended(self, suspended: bool) -> None:
+        self._auto_save_suspended = suspended
+        if suspended and hasattr(self, '_auto_save_timer') and self._auto_save_timer.isActive():
+            self._auto_save_timer.stop()
+
+    def _has_valid_editor_document(self) -> bool:
+        if self._auto_save_suspended or not self._document_ready_for_autosave:
+            return False
+        source_path = self.model.get_source_image_path()
+        if not source_path:
+            return False
+        return self._get_current_image() is not None
+
+    def _mark_editor_dirty(self) -> None:
+        if self._has_valid_editor_document():
+            self._editor_dirty = True
     
     def _set_regions(self, regions: list):
         """设置所有区域
@@ -204,18 +226,30 @@ class EditorController(QObject):
     def _connect_model_signals(self):
         """监听模型的变化，可能需要触发一些后续逻辑"""
         self.model.regions_changed.connect(self.on_regions_changed)
+        self.model.region_style_updated.connect(self.on_region_style_updated)
+        self.model.raw_mask_changed.connect(self.on_raw_mask_changed)
         # 监听蒙版编辑后触发 inpainting
         self.model.refined_mask_changed.connect(self.on_refined_mask_changed)
 
     def on_regions_changed(self, regions):
         """模型中的区域数据变化时的槽函数"""
-        # print(f"Controller: Regions changed, {len(regions)} regions total.")
-        # This is a placeholder for where you might trigger a repaint or update.
-        # For example, if you have a graphics scene, you might update it here.
-        pass
+        self._mark_editor_dirty()
+        self._schedule_auto_save()
+
+    def on_region_style_updated(self, _index: int):
+        """单个区域样式/几何变化时触发自动保存。"""
+        self._mark_editor_dirty()
+        self._schedule_auto_save()
+
+    def on_raw_mask_changed(self, _mask):
+        """原始蒙版变化时触发自动保存。"""
+        self._mark_editor_dirty()
+        self._schedule_auto_save()
 
     def on_refined_mask_changed(self, mask):
         """refined mask 变化时的槽函数，触发增量 inpainting"""
+        self._mark_editor_dirty()
+        self._schedule_auto_save()
         # 检查是否有必要的数据来进行 inpainting
         image = self._get_current_image()
         raw_mask = self.model.get_raw_mask()
@@ -349,6 +383,11 @@ class EditorController(QObject):
         Args:
             release_image_cache: 是否同时释放图片缓存（切换文件时通常不需要）
         """
+        self._set_auto_save_suspended(True)
+        self._document_ready_for_autosave = False
+        self._editor_dirty = False
+        self.model.set_source_image_path(None)
+
         # 关闭加载提示（如果存在）
         if hasattr(self, '_loading_toast') and self._loading_toast:
             try:
@@ -462,35 +501,13 @@ class EditorController(QObject):
 
     def load_image_and_regions(self, image_path: str):
         """加载图像及其关联的区域数据，并触发后台处理"""
-        # 检查是否有未导出的更改（基于快照比较，而不仅仅是撤销历史）
-        has_changes = self._has_changes_since_last_export()
-        if has_changes:
-            from PyQt6.QtWidgets import QMessageBox
-            msg_box = QMessageBox(None)
-            msg_box.setWindowTitle("未保存的编辑")
-            msg_box.setText("当前图片有未保存的编辑")
-            msg_box.setInformativeText("导出图片时会同时保存 JSON。")
-            
-            # 添加按钮
-            export_btn = msg_box.addButton("导出图片", QMessageBox.ButtonRole.YesRole)
-            cancel_btn = msg_box.addButton("取消", QMessageBox.ButtonRole.RejectRole)
-            msg_box.addButton("不保存", QMessageBox.ButtonRole.NoRole)
-            
-            msg_box.setDefaultButton(cancel_btn)
-            apply_message_box_style(msg_box)
-            msg_box.exec()
-            
-            clicked_button = msg_box.clickedButton()
-            
-            if clicked_button == cancel_btn:
-                return
-            elif clicked_button == export_btn:
-                self.export_image()
-                # 使用QTimer延迟加载，避免阻塞UI
-                from PyQt6.QtCore import QTimer
-                QTimer.singleShot(500, lambda: self._do_load_image(image_path))
-                return
-            # 如果点击"不保存"，继续执行下面的加载逻辑
+        if hasattr(self, '_auto_save_timer') and self._auto_save_timer.isActive():
+            self._auto_save_timer.stop()
+        # 先提交属性面板中尚未失焦的文本编辑，避免漏存
+        if self.view and hasattr(self.view, "force_save_property_panel_edits"):
+            self.view.force_save_property_panel_edits()
+        # 切换图片前总是尝试自动保存一次，避免漏存几何类改动
+        self._auto_save_current_edits_before_switch()
 
         self._do_load_image(image_path)
     
@@ -609,6 +626,8 @@ class EditorController(QObject):
     def _apply_loaded_data_to_model(self, source_path, image, compare_image, regions, raw_mask, inpainted_path, inpainted_image):
         """在主线程应用加载的数据到Model"""
         try:
+            self._set_auto_save_suspended(True)
+            self._document_ready_for_autosave = False
             # 关闭加载提示
             if hasattr(self, '_loading_toast') and self._loading_toast:
                 self._loading_toast.close()
@@ -652,11 +671,15 @@ class EditorController(QObject):
             else:
                 self.model.set_inpainted_image(None)
 
-            # 触发后台处理
-            if regions:
-                self.async_service.submit_task(self._async_refine_and_inpaint())
-                
+            # 打开编辑器时仅加载数据，不自动触发修复预览。
+            # 修复操作由用户在编辑流程中显式触发。
+            self._document_ready_for_autosave = True
+            self._editor_dirty = False
+            self._set_auto_save_suspended(False)
+
         except Exception as e:
+            self._document_ready_for_autosave = False
+            self._set_auto_save_suspended(False)
             self.logger.error(f"Error applying loaded data to model: {e}", exc_info=True)
     
     def _handle_load_error(self, error_msg: str):
@@ -668,12 +691,16 @@ class EditorController(QObject):
         
         if hasattr(self, 'toast_manager'):
             self.toast_manager.show_error(f"加载失败: {error_msg}")
-        
+
+        self._document_ready_for_autosave = False
+        self._editor_dirty = False
+        self.model.set_source_image_path(None)
         self.model.set_image(None)
         self.model.set_compare_image(None)
         self.model.set_regions([])
         self.model.set_raw_mask(None)
         self.model.set_refined_mask(None)
+        self._set_auto_save_suspended(False)
 
     async def _async_refine_and_inpaint(self):
         """Asynchronously refines the mask and generates an inpainting preview."""
@@ -1790,14 +1817,20 @@ class EditorController(QObject):
         except (TypeError, ValueError):
             pass
 
-    def _resolve_editor_json_path(self, source_path: str) -> str:
+    def _resolve_editor_json_path(self, source_path: str, silent: bool = False) -> str:
         """解析编辑器当前图片对应的 JSON 路径。"""
         json_path = find_json_path(source_path)
         if not json_path:
             json_path = get_json_path(source_path, create_dir=True)
-            self.logger.info(f"No existing JSON found, will create new one at: {json_path}")
+            if silent:
+                self.logger.debug(f"No existing JSON found, will create new one at: {json_path}")
+            else:
+                self.logger.info(f"No existing JSON found, will create new one at: {json_path}")
         else:
-            self.logger.info(f"Found existing JSON, will replace: {json_path}")
+            if silent:
+                self.logger.debug(f"Found existing JSON, will replace: {json_path}")
+            else:
+                self.logger.info(f"Found existing JSON, will replace: {json_path}")
         return json_path
 
     def _save_current_inpainted_image(
@@ -1887,6 +1920,158 @@ class EditorController(QObject):
             has_regions=bool(regions),
         )
         return json_path
+
+    def _persist_editor_state_to_json(self, source_path: str, silent: bool = False) -> str:
+        """将当前编辑器状态同步到 JSON（不导出图片）。"""
+        image = self._get_current_image()
+        if not image:
+            raise RuntimeError("Missing image data")
+
+        regions = self._get_regions() or []
+        mask = self.model.get_refined_mask()
+        if mask is None:
+            mask = self.model.get_raw_mask()
+
+        config = self.config_service.get_config()
+        if hasattr(config, "model_dump"):
+            config_dict = config.model_dump()
+        elif hasattr(config, "dict"):
+            config_dict = config.dict()
+        else:
+            config_dict = {}
+
+        from services.export_service import ExportService
+
+        export_service = ExportService()
+        json_path = self._resolve_editor_json_path(source_path, silent=silent)
+        if silent and not regions and self._existing_json_has_nonempty_regions(json_path, source_path):
+            return json_path
+
+        json_regions = [dict(region) for region in regions]
+        for region in json_regions:
+            self._apply_white_frame_center(region)
+        export_service._save_regions_data_with_path(
+            json_regions,
+            json_path,
+            source_path,
+            None if mask is None else np.array(mask, copy=True),
+            config_dict,
+        )
+        self._save_export_snapshot()
+        self._editor_dirty = False
+        return json_path
+
+    def _existing_json_has_nonempty_regions(self, json_path: str, source_path: str) -> bool:
+        try:
+            if not json_path or not os.path.exists(json_path):
+                return False
+
+            with open(json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            if not isinstance(data, dict) or not data:
+                return False
+
+            image_key = os.path.abspath(source_path)
+            image_data = data.get(image_key)
+            if image_data is None:
+                image_data = next(iter(data.values()), None)
+
+            if not isinstance(image_data, dict):
+                return False
+
+            existing_regions = image_data.get('regions')
+            return isinstance(existing_regions, list) and len(existing_regions) > 0
+        except Exception:
+            return False
+
+    def _auto_save_current_edits_before_switch(self) -> None:
+        """切换图片前自动保存当前编辑器状态到 JSON。"""
+        if not self._has_valid_editor_document():
+            return
+        if not self._editor_dirty:
+            return
+        source_path = self.model.get_source_image_path()
+        if self._should_ignore_empty_regions_autosave(source_path):
+            return
+
+        try:
+            self._persist_editor_state_to_json(source_path, silent=True)
+            self.logger.debug(f"Auto-saved editor changes before switch: {source_path}")
+        except Exception as e:
+            self.logger.error(f"Auto-save before switch failed: {e}", exc_info=True)
+            if hasattr(self, "toast_manager"):
+                self.toast_manager.show_error("自动保存失败，已继续切换")
+
+    def _schedule_auto_save(self) -> None:
+        """调度防抖自动保存，避免每次微小变动都立即写盘。"""
+        if not self._has_valid_editor_document():
+            return
+        if not self._editor_dirty:
+            return
+        source_path = self.model.get_source_image_path()
+        if self._should_ignore_empty_regions_autosave(source_path):
+            return
+        self._auto_save_timer.start()
+
+    def _auto_save_json_silent(self) -> None:
+        """静默自动保存当前编辑到 JSON。"""
+        if not self._has_valid_editor_document():
+            return
+        if not self._editor_dirty:
+            return
+        source_path = self.model.get_source_image_path()
+        if self._should_ignore_empty_regions_autosave(source_path):
+            return
+        try:
+            if self.view and hasattr(self.view, "force_save_property_panel_edits"):
+                self.view.force_save_property_panel_edits()
+            self._persist_editor_state_to_json(source_path, silent=True)
+            self.logger.debug(f"Auto-saved JSON: {source_path}")
+        except Exception as e:
+            self.logger.error(f"Real-time auto-save failed: {e}", exc_info=True)
+
+    def _should_ignore_empty_regions_autosave(self, source_path: str) -> bool:
+        try:
+            from manga_translator.utils.path_manager import find_json_path
+
+            json_path = find_json_path(source_path)
+            if not json_path or not os.path.exists(json_path):
+                return False
+
+            with open(json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            if not isinstance(data, dict) or not data:
+                return False
+
+            image_key = os.path.abspath(source_path)
+            image_data = data.get(image_key)
+            if image_data is None:
+                image_data = next(iter(data.values()), None)
+
+            return isinstance(image_data, dict) and image_data.get('regions') == []
+        except Exception:
+            return False
+
+    @pyqtSlot()
+    def save_current_edits(self):
+        """手动保存（Ctrl+S）：只保存编辑状态到 JSON。"""
+        source_path = self.model.get_source_image_path()
+        if not source_path:
+            if hasattr(self, "toast_manager"):
+                self.toast_manager.show_error("保存失败：当前没有已打开图片")
+            return
+        try:
+            if self.view and hasattr(self.view, "force_save_property_panel_edits"):
+                self.view.force_save_property_panel_edits()
+            json_path = self._persist_editor_state_to_json(source_path)
+            if hasattr(self, "toast_manager"):
+                self.toast_manager.show_success(f"已保存\n{json_path}")
+        except Exception as e:
+            self.logger.error(f"Manual save failed: {e}", exc_info=True)
+            if hasattr(self, "toast_manager"):
+                self.toast_manager.show_error("保存失败")
 
     async def _async_export_with_desktop_ui_service(self, image, regions, mask, source_path=None, inpainted_image=None):
         """使用desktop-ui导出服务进行异步导出"""
@@ -2274,4 +2459,3 @@ class EditorController(QObject):
     def set_selection_from_list(self, indices: list):
         """Slot to handle selection changes originating from the RegionListView."""
         self.model.set_selection(indices)
-

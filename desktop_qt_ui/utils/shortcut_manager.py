@@ -154,6 +154,14 @@ class EditorShortcutManager(ShortcutManager):
             self._handle_export,
             context_aware=True
         )
+
+        # 保存快捷键 (Ctrl+S)
+        self.register_shortcut(
+            'save',
+            QKeySequence.StandardKey.Save,
+            self._handle_save,
+            context_aware=True
+        )
         
         # 工具快捷键 Q (选择)
         self.register_shortcut(
@@ -260,6 +268,10 @@ class EditorShortcutManager(ShortcutManager):
         """处理导出快捷键 (Ctrl+Q)"""
         # 导出是全局操作
         self.controller.export_image()
+
+    def _handle_save(self, focused_widget):
+        """处理保存快捷键 (Ctrl+S)"""
+        self.controller.save_current_edits()
         
     def _forward_key_to_widget(self, widget, key_code, text, shortcut_name):
         """

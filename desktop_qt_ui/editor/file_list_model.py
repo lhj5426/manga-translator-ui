@@ -128,6 +128,19 @@ class FileListModel:
         if source_from_map:
             return source_from_map
 
+        # 兼容 save_to_source_dir 输出路径：
+        # <dir>/manga_translator_work/result/<name>.jpg -> <dir>/<name>.jpg
+        parent_dir = os.path.dirname(norm_path)
+        work_dir = os.path.dirname(parent_dir)
+        if (
+            os.path.basename(parent_dir).lower() == "result" and
+            os.path.basename(work_dir).lower() == "manga_translator_work"
+        ):
+            source_dir = os.path.dirname(work_dir)
+            candidate_source = os.path.join(source_dir, os.path.basename(norm_path))
+            if os.path.exists(candidate_source):
+                return os.path.normpath(candidate_source)
+
         return os.path.normpath(resolve_original_image_path(norm_path))
 
     def _identify_file(self, file_path: str) -> FileItem:

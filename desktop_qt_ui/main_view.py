@@ -241,9 +241,15 @@ class MainView(QWidget):
             self.workflow_mode_combo.addItems(
                 [
                     self._t("Normal Translation"),
+                    self._t("------ Split Execution ------"),
+                    self._t("Import YOLO Label Data"),
+                    self._t("OCR Only"),
+                    self._t("Translate JSON Only"),
+                    self._t("Import Translation and Generate Mask"),
+                    self._t("Render Only (Use Existing Mask)"),
+                    self._t("------ Other Optional Modes ------"),
                     self._t("Export Translation"),
                     self._t("Export Original Text"),
-                    self._t("Translate JSON Only"),
                     self._t("Import Translation and Render"),
                     self._t("Colorize Only"),
                     self._t("Upscale Only"),
@@ -251,6 +257,14 @@ class MainView(QWidget):
                     self._t("Replace Translation"),
                 ]
             )
+            model = self.workflow_mode_combo.model()
+            if model is not None:
+                split_item = model.item(1)
+                optional_item = model.item(7)
+                if split_item is not None:
+                    split_item.setEnabled(False)
+                if optional_item is not None:
+                    optional_item.setEnabled(False)
             self.workflow_mode_combo.setCurrentIndex(current_index)
             self.workflow_mode_combo.blockSignals(False)
         self._update_workflow_mode_description(current_index)

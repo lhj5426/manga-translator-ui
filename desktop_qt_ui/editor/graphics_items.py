@@ -372,7 +372,8 @@ class RegionTextItem(QGraphicsItemGroup):
             painter.setPen(QPen(QColor("black"), 2))
             painter.drawPolygon(poly)
         else:
-            pen = QPen(QColor(230, 230, 230), 2)
+            # 非选中态使用高可见颜色，避免在浅色背景上“看不见”
+            pen = QPen(QColor(0, 255, 180), 2)
             pen.setStyle(Qt.PenStyle.DashLine)
             painter.setPen(pen)
             painter.setBrush(QBrush(Qt.BrushStyle.NoBrush))

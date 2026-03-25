@@ -1,0 +1,436 @@
+2026-03-25 18:31:59,998 - INFO - [root] - UI日志文件: D:\Ddown\manga-translator-ui-tongbu\desktop_qt_ui\..\result\log_20260325183159.txt
+2026-03-25 18:32:00,005 - INFO - [root] - 已启用崩溃捕获 (faulthandler)，崩溃信息将记录在此文件中
+2026-03-25 18:32:00,153 - INFO - [root] - UI 图标加载成功: D:\Ddown\manga-translator-ui-tongbu\doc\images\icon.png
+2026-03-25 18:32:00,254 - INFO - [services.config_service] - 加载默认配置: D:\Ddown\manga-translator-ui-tongbu\examples\config-example.json
+2026-03-25 18:32:00,331 - INFO - [services.config_service] - 加载用户配置: D:\Ddown\manga-translator-ui-tongbu\examples\config.json
+2026-03-25 18:32:00,370 - INFO - [services.i18n_service] - 初始化国际化管理器，配置语言: auto, 当前语言: zh_CN
+2026-03-25 18:32:00,371 - INFO - [services.preset_service] - 预设目录: D:\Ddown\manga-translator-ui-tongbu\presets
+2026-03-25 18:32:00,372 - INFO - [MangaTranslatorUI] - [日志服务] 控制台日志级别已设置为 INFO（正常日志）
+2026-03-25 18:32:00,372 - INFO - [services] - 基础服务初始化完成
+2026-03-25 18:32:00,372 - INFO - [services] - H_SERVICE_INIT: Initializing heavy services...
+2026-03-25 18:32:00,415 - INFO - [services.ocr_service] - OCR识别服务初始化完成，使用设备: cuda
+2026-03-25 18:32:00,417 - INFO - [desktop_qt_ui.editor.core.async_job_manager] - AsyncJobManager event loop started
+2026-03-25 18:32:00,427 - INFO - [services.async_service] - AsyncService initialized with new AsyncJobManager
+2026-03-25 18:32:00,427 - INFO - [services.render_parameter_service] - 渲染参数管理服务初始化完成
+2026-03-25 18:32:00,428 - INFO - [services] - 后台重量级服务初始化完成
+2026-03-25 18:32:00,451 - INFO - [root] - 主页面应用业务逻辑初始化完成
+2026-03-25 18:32:00,451 - INFO - [services] - 注册服务: app_logic
+2026-03-25 18:32:04,617 - INFO - [root] - 应用初始化完成
+2026-03-25 18:32:04,827 - INFO - [root] - Windows 原生窗口图标已设置: D:\Ddown\manga-translator-ui-tongbu\doc\images\icon.ico
+2026-03-25 18:32:07,439 - INFO - [app_logic] - Retrieved last open directory: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels
+2026-03-25 18:32:09,223 - INFO - [app_logic] - Saving last open directory: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels
+2026-03-25 18:32:09,248 - INFO - [app_logic] - Added 1 files/folders to the list.
+2026-03-25 18:32:12,070 - INFO - [root] - 即将开始后台任务，强制重新加载所有配置...
+2026-03-25 18:32:12,071 - INFO - [services.config_service] - 正在强制重新加载配置...
+2026-03-25 18:32:12,072 - INFO - [services.config_service] - .env 文件已从 D:\Ddown\manga-translator-ui-tongbu\.env 重新加载，环境变量已更新。
+2026-03-25 18:32:12,073 - INFO - [services.config_service] - 加载默认配置: D:\Ddown\manga-translator-ui-tongbu\examples\config-example.json
+2026-03-25 18:32:12,085 - INFO - [services.config_service] - 加载用户配置: D:\Ddown\manga-translator-ui-tongbu\examples\config.json
+2026-03-25 18:32:12,095 - INFO - [services.config_service] - 配置重载完成。
+2026-03-25 18:32:12,095 - INFO - [root] - 配置已刷新，继续执行任务。
+2026-03-25 18:32:12,100 - INFO - [root] - 文件扫描任务已启动
+2026-03-25 18:32:12,101 - INFO - [app_logic] - 正在扫描文件...
+2026-03-25 18:32:12,112 - INFO - [app_logic] - 正在扫描文件夹: OBB_labels
+2026-03-25 18:32:12,114 - INFO - [root] - 文件扫描完成，共找到 3 个文件
+2026-03-25 18:32:12,119 - INFO - [app_logic] - --- 开始处理任务...
+2026-03-25 18:32:12,119 - INFO - [root] - 翻译任务已启动 (任务ID: 1)
+2026-03-25 18:32:12,261 - DEBUG - [matplotlib] - matplotlib data path: C:\Users\ziiyue\.conda\envs\MTUI\Lib\site-packages\matplotlib\mpl-data
+2026-03-25 18:32:12,272 - DEBUG - [matplotlib] - CONFIGDIR=C:\Users\ziiyue\.matplotlib
+2026-03-25 18:32:12,275 - DEBUG - [matplotlib] - interactive is False
+2026-03-25 18:32:12,276 - DEBUG - [matplotlib] - platform is win32
+2026-03-25 18:32:14,579 - INFO - [app_logic] - --- 正在初始化翻译器...
+2026-03-25 18:32:14,580 - INFO - [app_logic] - --- 翻译器初始化完成
+2026-03-25 18:32:14,580 - INFO - [app_logic] - --- 配置对象创建完成
+2026-03-25 18:32:14,581 - INFO - [app_logic] - --- 开始批量处理 (批量模式)
+2026-03-25 18:32:14,581 - INFO - [app_logic] - 批量处理模式：共 3 张图片，分 1 个批次处理
+2026-03-25 18:32:14,581 - INFO - [app_logic] - 翻译流程：{mode}
+2026-03-25 18:32:14,581 - INFO - [app_logic] - 输出目录：J:/G/Desktop/OCRTEST/测试用10图
+2026-03-25 18:32:14,581 - INFO - [app_logic] - 提示：先导入翻译 JSON，仅生成/精修掩膜 PNG，不输出渲染文本图。
+2026-03-25 18:32:14,581 - INFO - [app_logic] - 开始执行任务...
+2026-03-25 18:32:14,581 - INFO - [manga_translator] - Load text mode detected: Auto-importing translations from TXT to JSON...
+2026-03-25 18:32:14,581 - INFO - [root] - [进度] 0/3: 批量处理中 | 等待首张完成后估算剩余时间
+2026-03-25 18:32:14,585 - INFO - [manga_translator] - 开始批量任务：共 3 张图片，批次大小 3
+2026-03-25 18:32:14,585 - INFO - [manga_translator] - [阶段] 批量翻译任务启动
+2026-03-25 18:32:14,585 - INFO - [manga_translator] - 模型清理任务已启动，models_ttl=0 秒
+2026-03-25 18:32:14,585 - INFO - [manga_translator] - 正在处理滚动批次 1/1（图片 1-3）
+2026-03-25 18:32:14,585 - INFO - [manga_translator] - [阶段] 开始处理批次 1/1
+2026-03-25 18:32:14,638 - INFO - [manga_translator] - Load text mode: Loading translations from JSON and skipping detection/OCR/translation
+2026-03-25 18:32:14,916 - INFO - [manga_translator] - Translation file not found for: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\0008.jpg
+2026-03-25 18:32:14,916 - ERROR - [manga_translator] - Error loading text for image 1 in batch: Translation file not found or invalid: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\0008_translations.json
+2026-03-25 18:32:15,114 - INFO - [manga_translator] - Translation file not found for: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\OSQC07476.jpg
+2026-03-25 18:32:15,114 - ERROR - [manga_translator] - Error loading text for image 2 in batch: Translation file not found or invalid: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\OSQC07476_translations.json
+2026-03-25 18:32:15,334 - INFO - [manga_translator] - Translation file not found for: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\OSQC07478.jpg
+2026-03-25 18:32:15,335 - ERROR - [manga_translator] - Error loading text for image 3 in batch: Translation file not found or invalid: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\OSQC07478_translations.json
+2026-03-25 18:32:15,350 - INFO - [manga_translator] -   -> [LOAD_TEXT] 保存成功: 0008.jpg
+2026-03-25 18:32:15,351 - INFO - [root] - [进度] 1/3: 批量处理中 | 均速 0.8 秒/张 | 预计剩余 2秒 | 已失败 1 张
+2026-03-25 18:32:15,367 - INFO - [manga_translator] -   -> [LOAD_TEXT] 保存成功: OSQC07476.jpg
+2026-03-25 18:32:15,368 - INFO - [root] - [进度] 2/3: 批量处理中 | 均速 0.4 秒/张 | 预计剩余 0秒 | 已失败 2 张
+2026-03-25 18:32:15,867 - INFO - [manga_translator] -   -> [LOAD_TEXT] 保存成功: OSQC07478.jpg
+2026-03-25 18:32:16,049 - INFO - [root] - [进度] 3/3: 批量处理中 | 均速 0.4 秒/张 | 预计剩余 0秒 | 已失败 3 张
+2026-03-25 18:32:16,146 - INFO - [manga_translator] - 批量任务完成：已处理 3 张图片
+2026-03-25 18:32:16,146 - WARNING - [app_logic] - 
+图片 0008.jpg 处理失败：Translation file not found or invalid: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\0008_translations.json
+2026-03-25 18:32:16,146 - ERROR - [app_logic] - Translation file not found or invalid: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\0008_translations.json
+2026-03-25 18:32:16,147 - WARNING - [app_logic] - 
+图片 OSQC07476.jpg 处理失败：Translation file not found or invalid: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\OSQC07476_translations.json
+2026-03-25 18:32:16,147 - ERROR - [app_logic] - Translation file not found or invalid: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\OSQC07476_translations.json
+2026-03-25 18:32:16,147 - WARNING - [app_logic] - 
+图片 OSQC07478.jpg 处理失败：Translation file not found or invalid: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\OSQC07478_translations.json
+2026-03-25 18:32:16,147 - ERROR - [app_logic] - Translation file not found or invalid: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\OSQC07478_translations.json
+2026-03-25 18:32:16,147 - WARNING - [app_logic] - 
+批量翻译完成：失败 3 张
+- 0008.jpg: Translation file not found or invalid: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\0008_translations.json
+- OSQC07476.jpg: Translation file not found or invalid: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\OSQC07476_translations.json
+- OSQC07478.jpg: Translation file not found or invalid: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\OSQC07478_translations.json
+2026-03-25 18:32:16,147 - WARNING - [app_logic] - 
+批量翻译完成：成功 0/3 张，失败 3/3 张
+2026-03-25 18:32:16,147 - INFO - [app_logic] - 文件已保存到：J:/G/Desktop/OCRTEST/测试用10图
+2026-03-25 18:32:16,153 - INFO - [root] - 批量翻译任务完成，收到 3 个结果。正在保存...
+2026-03-25 18:32:16,154 - WARNING - [root] - 翻译任务完成。成功处理 0 个文件，失败 3 个文件。
+2026-03-25 18:32:16,355 - DEBUG - [root] - 翻译完成后已调用 torch.cuda.empty_cache()
+2026-03-25 18:32:29,057 - DEBUG - [services.config_service] - 配置已更新，正在通知监听者...
+2026-03-25 18:32:29,711 - INFO - [root] - 即将开始后台任务，强制重新加载所有配置...
+2026-03-25 18:32:29,711 - INFO - [services.config_service] - 正在强制重新加载配置...
+2026-03-25 18:32:29,713 - INFO - [services.config_service] - .env 文件已从 D:\Ddown\manga-translator-ui-tongbu\.env 重新加载，环境变量已更新。
+2026-03-25 18:32:29,714 - INFO - [services.config_service] - 加载默认配置: D:\Ddown\manga-translator-ui-tongbu\examples\config-example.json
+2026-03-25 18:32:29,722 - DEBUG - [services.config_service] - 加载配置: config-example.json
+2026-03-25 18:32:29,723 - INFO - [services.config_service] - 加载用户配置: D:\Ddown\manga-translator-ui-tongbu\examples\config.json
+2026-03-25 18:32:29,736 - DEBUG - [services.config_service] - 加载配置: config.json
+2026-03-25 18:32:29,747 - INFO - [services.config_service] - 配置重载完成。
+2026-03-25 18:32:29,747 - INFO - [root] - 配置已刷新，继续执行任务。
+2026-03-25 18:32:29,755 - INFO - [root] - 文件扫描任务已启动
+2026-03-25 18:32:29,756 - INFO - [app_logic] - 正在扫描文件...
+2026-03-25 18:32:29,758 - INFO - [app_logic] - 正在扫描文件夹: OBB_labels
+2026-03-25 18:32:29,759 - INFO - [root] - 文件扫描完成，共找到 3 个文件
+2026-03-25 18:32:29,761 - INFO - [app_logic] - --- 开始处理任务...
+2026-03-25 18:32:29,762 - INFO - [root] - YOLO标注导入任务已启动 (任务ID: 2)
+2026-03-25 18:32:29,762 - DEBUG - [asyncio] - Using proactor: IocpProactor
+2026-03-25 18:32:29,764 - INFO - [app_logic] - --- 正在初始化翻译器...
+2026-03-25 18:32:29,765 - INFO - [app_logic] - --- 翻译器初始化完成
+2026-03-25 18:32:29,766 - INFO - [app_logic] - --- 配置对象创建完成
+2026-03-25 18:32:29,766 - INFO - [app_logic] - --- 开始批量处理 (批量模式)
+2026-03-25 18:32:29,766 - INFO - [app_logic] - 批量处理模式：共 3 张图片，分 1 个批次处理
+2026-03-25 18:32:29,766 - INFO - [app_logic] - 执行：从YOLO数据导入
+2026-03-25 18:32:29,767 - INFO - [app_logic] - 输出目录：J:/G/Desktop/OCRTEST/测试用10图
+2026-03-25 18:32:29,767 - INFO - [app_logic] - 提示：先为所有图片导入 YOLO 标注，并把可复用的检测框保存到 JSON，不执行 OCR
+2026-03-25 18:32:29,767 - INFO - [app_logic] - 开始执行任务...
+2026-03-25 18:32:29,767 - INFO - [manga_translator] - 检测/OCR分阶段模式已启用：强制使用单批次按阶段处理全部文件。
+2026-03-25 18:32:29,767 - INFO - [manga_translator] - 开始批量任务：共 3 张图片，批次大小 3
+2026-03-25 18:32:29,767 - INFO - [manga_translator] - [阶段] YOLO标签导入任务启动
+2026-03-25 18:32:29,767 - INFO - [manga_translator] - 模型清理任务已启动，models_ttl=0 秒
+2026-03-25 18:32:29,767 - INFO - [manga_translator] - 正在处理滚动批次 1/1（图片 1-3）
+2026-03-25 18:32:29,768 - INFO - [manga_translator] - [阶段] 开始处理批次 1/1
+2026-03-25 18:32:29,768 - INFO - [root] - [进度] 0/3: 批量处理中 | 等待首张完成后估算剩余时间
+2026-03-25 18:32:29,807 - INFO - [manga_translator] - [阶段] 开始批量导入YOLO检测框
+2026-03-25 18:32:30,116 - INFO - [manga_translator] - 导入 YOLO 标注: file=J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\0008.txt, boxes=0, skipped=0
+2026-03-25 18:32:31,644 - INFO - [manga_translator] - Bubble cache primed during detection stage: detections=0
+2026-03-25 18:32:31,645 - INFO - [manga_translator] - Import YOLO only mode: skipping mask export
+2026-03-25 18:32:31,646 - INFO - [manga_translator] - JSON saved to: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\0008_translations.json
+2026-03-25 18:32:31,827 - INFO - [root] - [进度] 1/3: 批量处理中 | 均速 1.9 秒/张 | 预计剩余 4秒
+2026-03-25 18:32:32,068 - INFO - [manga_translator] - 导入 YOLO 标注: file=J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\OSQC07476.txt, boxes=12, skipped=0
+2026-03-25 18:32:32,289 - INFO - [manga_translator] - Bubble cache primed during detection stage: detections=3
+2026-03-25 18:32:32,291 - DEBUG - [py3langid.langid] - initializing identifier
+2026-03-25 18:32:32,454 - INFO - [manga_translator] - Import YOLO only mode: skipping mask export
+2026-03-25 18:32:32,458 - INFO - [manga_translator] - JSON saved to: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07476_translations.json
+2026-03-25 18:32:32,637 - INFO - [root] - [进度] 2/3: 批量处理中 | 均速 1.3 秒/张 | 预计剩余 1秒
+2026-03-25 18:32:32,894 - INFO - [manga_translator] - 导入 YOLO 标注: file=J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\OSQC07478.txt, boxes=8, skipped=0
+2026-03-25 18:32:33,121 - INFO - [manga_translator] - Bubble cache primed during detection stage: detections=5
+2026-03-25 18:32:33,130 - INFO - [manga_translator] - Import YOLO only mode: skipping mask export
+2026-03-25 18:32:33,142 - INFO - [manga_translator] - JSON saved to: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07478_translations.json
+2026-03-25 18:32:33,321 - INFO - [root] - [进度] 3/3: 批量处理中 | 均速 1.1 秒/张 | 预计剩余 0秒
+2026-03-25 18:32:33,323 - INFO - [manga_translator] - [阶段] YOLO检测框导入完成
+2026-03-25 18:32:33,526 - INFO - [manga_translator] - 批量任务完成：已处理 3 张图片
+2026-03-25 18:32:33,527 - INFO - [app_logic] - YOLO标签导入成功：成功导入 3/3 个标注文件
+2026-03-25 18:32:33,527 - INFO - [app_logic] - 导入YOLO标注完成：共 3 个标注文件，导入 2 个标注文件，空TXT 1 个文件
+2026-03-25 18:32:33,527 - INFO - [app_logic] - 导入结果已保存到：J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\result
+2026-03-25 18:32:33,528 - INFO - [root] - YOLO标注导入完成，收到 3 个结果。正在保存...
+2026-03-25 18:32:33,529 - INFO - [root] - YOLO标注导入完成。总共成功导入 3 个文件。
+2026-03-25 18:32:33,631 - DEBUG - [root] - 翻译完成后已调用 torch.cuda.empty_cache()
+2026-03-25 18:33:04,082 - DEBUG - [services.config_service] - 配置已更新，正在通知监听者...
+2026-03-25 18:33:04,665 - INFO - [root] - 即将开始后台任务，强制重新加载所有配置...
+2026-03-25 18:33:04,665 - INFO - [services.config_service] - 正在强制重新加载配置...
+2026-03-25 18:33:04,721 - INFO - [services.config_service] - .env 文件已从 D:\Ddown\manga-translator-ui-tongbu\.env 重新加载，环境变量已更新。
+2026-03-25 18:33:04,722 - INFO - [services.config_service] - 加载默认配置: D:\Ddown\manga-translator-ui-tongbu\examples\config-example.json
+2026-03-25 18:33:04,731 - DEBUG - [services.config_service] - 加载配置: config-example.json
+2026-03-25 18:33:04,731 - INFO - [services.config_service] - 加载用户配置: D:\Ddown\manga-translator-ui-tongbu\examples\config.json
+2026-03-25 18:33:04,770 - DEBUG - [services.config_service] - 加载配置: config.json
+2026-03-25 18:33:04,779 - INFO - [services.config_service] - 配置重载完成。
+2026-03-25 18:33:04,779 - INFO - [root] - 配置已刷新，继续执行任务。
+2026-03-25 18:33:04,792 - INFO - [root] - 文件扫描任务已启动
+2026-03-25 18:33:04,793 - INFO - [app_logic] - 正在扫描文件...
+2026-03-25 18:33:04,796 - INFO - [app_logic] - 正在扫描文件夹: OBB_labels
+2026-03-25 18:33:04,796 - INFO - [root] - 文件扫描完成，共找到 3 个文件
+2026-03-25 18:33:04,799 - INFO - [app_logic] - --- 开始处理任务...
+2026-03-25 18:33:04,799 - INFO - [root] - OCR任务已启动 (任务ID: 3)
+2026-03-25 18:33:04,800 - DEBUG - [asyncio] - Using proactor: IocpProactor
+2026-03-25 18:33:04,801 - INFO - [app_logic] - --- 正在初始化翻译器...
+2026-03-25 18:33:04,801 - INFO - [app_logic] - --- 翻译器初始化完成
+2026-03-25 18:33:04,802 - INFO - [app_logic] - --- 配置对象创建完成
+2026-03-25 18:33:04,802 - INFO - [app_logic] - --- 开始批量处理 (批量模式)
+2026-03-25 18:33:04,802 - INFO - [app_logic] - 批量处理模式：共 3 张图片，分 1 个批次处理
+2026-03-25 18:33:04,802 - INFO - [app_logic] - 执行：运行OCR提取文字
+2026-03-25 18:33:04,802 - INFO - [app_logic] - 输出目录：J:/G/Desktop/OCRTEST/测试用10图
+2026-03-25 18:33:04,802 - INFO - [app_logic] - 提示：从 JSON 读取已有检测框，仅执行 OCR，然后导出原文模板
+2026-03-25 18:33:04,803 - INFO - [app_logic] - 开始执行任务...
+2026-03-25 18:33:04,803 - INFO - [manga_translator] - 检测/OCR分阶段模式已启用：强制使用单批次按阶段处理全部文件。
+2026-03-25 18:33:04,803 - INFO - [manga_translator] - 开始批量任务：共 3 张图片，批次大小 3
+2026-03-25 18:33:04,803 - INFO - [root] - [进度] 0/3: 批量处理中 | 等待首张完成后估算剩余时间
+2026-03-25 18:33:04,803 - INFO - [manga_translator] - [阶段] OCR任务启动
+2026-03-25 18:33:04,805 - INFO - [manga_translator] - 模型清理任务已启动，models_ttl=0 秒
+2026-03-25 18:33:04,805 - INFO - [manga_translator] - 正在处理滚动批次 1/1（图片 1-3）
+2026-03-25 18:33:04,805 - INFO - [manga_translator] - [阶段] 开始处理批次 1/1
+2026-03-25 18:33:04,842 - INFO - [manga_translator] - [阶段] 开始加载已保存的检测框
+2026-03-25 18:33:05,132 - WARNING - [manga_translator] - JSON中未找到可复用检测框：J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\0008_translations.json
+2026-03-25 18:33:05,367 - INFO - [manga_translator] - 已从JSON加载检测框：12 个，文件：J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07476_translations.json
+2026-03-25 18:33:05,632 - INFO - [manga_translator] - 已从JSON加载检测框：8 个，文件：J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07478_translations.json
+2026-03-25 18:33:05,633 - INFO - [manga_translator] - [阶段] 检测框加载完成，开始批量OCR
+2026-03-25 18:33:05,633 - INFO - [manga_translator] - [阶段] 仅OCR模式：只写入JSON，不导出原文TXT
+2026-03-25 18:33:05,638 - INFO - [manga_translator] - JSON saved to: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\0008_translations.json
+2026-03-25 18:33:05,943 - INFO - [root] - [进度] 1/3: 批量处理中 | 均速 0.8 秒/张 | 预计剩余 2秒
+2026-03-25 18:33:05,945 - INFO - [manga_translator] - 执行OCR
+2026-03-25 18:33:05,946 - INFO - [manga_translator] - Running primary OCR with: 48px
+2026-03-25 18:33:09,895 - INFO - [manga-translator.Model48pxOCR] - prob: 0.8086991906166077 へぇ〜 fg: (12, 9, 6) bg: (12, 9, 6)
+2026-03-25 18:33:09,903 - INFO - [manga-translator.Model48pxOCR] - prob: 0.9999352693557739 その子が fg: (194, 25, 73) bg: (194, 25, 73)
+2026-03-25 18:33:09,913 - INFO - [manga-translator.Model48pxOCR] - prob: 0.6082192659378052 卒業したら： fg: (16, 13, 12) bg: (16, 13, 12)
+2026-03-25 18:33:09,923 - INFO - [manga-translator.Model48pxOCR] - prob: 0.9959498047828674 言ったでしょ？ fg: (194, 29, 76) bg: (194, 29, 76)
+2026-03-25 18:33:09,935 - INFO - [manga-translator.Model48pxOCR] - prob: 0.8194316625595093 ほら１週間前から fg: (195, 23, 74) bg: (195, 23, 74)
+2026-03-25 18:33:09,948 - INFO - [manga-translator.Model48pxOCR] - prob: 0.9993276596069336 留学生の子がウチに fg: (195, 26, 78) bg: (195, 26, 78)
+2026-03-25 18:33:09,961 - INFO - [manga-translator.Model48pxOCR] - prob: 0.994850218296051 ひなのに告白する！ fg: (11, 13, 12) bg: (11, 13, 12)
+2026-03-25 18:33:09,977 - INFO - [manga-translator.Model48pxOCR] - prob: 0.9998738765716553 初めての味だったなぁ fg: (193, 26, 76) bg: (193, 26, 76)
+2026-03-25 18:33:09,994 - INFO - [manga-translator.Model48pxOCR] - prob: 0.9999626278877258 ご飯作ってくれたけど fg: (195, 25, 77) bg: (195, 25, 77)
+2026-03-25 18:33:10,024 - INFO - [manga-translator.Model48pxOCR] - prob: 0.9953331351280212 すごい美味しかったの！ fg: (194, 25, 76) bg: (194, 25, 76)
+2026-03-25 18:33:10,040 - INFO - [manga-translator.Model48pxOCR] - prob: 0.9909796118736267 ホームステイしてるって fg: (192, 26, 78) bg: (192, 26, 78)
+2026-03-25 18:33:10,059 - INFO - [manga-translator.Model48pxOCR] - prob: 0.9994935393333435 スパイスがいっぱい入ってて fg: (193, 25, 78) bg: (193, 25, 78)
+2026-03-25 18:33:10,991 - INFO - [manga_translator] - No pre-translation replacements made.
+2026-03-25 18:33:11,198 - INFO - [manga_translator] - JSON saved to: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07476_translations.json
+2026-03-25 18:33:11,391 - INFO - [root] - [进度] 2/3: 批量处理中 | 均速 3.2 秒/张 | 预计剩余 3秒
+2026-03-25 18:33:11,392 - INFO - [manga_translator] - 执行OCR
+2026-03-25 18:33:11,393 - INFO - [manga_translator] - Running primary OCR with: 48px
+2026-03-25 18:33:12,493 - INFO - [manga-translator.Model48pxOCR] - prob: 0.9998396635055542 学校では fg: (31, 28, 35) bg: (31, 28, 35)
+2026-03-25 18:33:12,501 - INFO - [manga-translator.Model48pxOCR] - prob: 0.9998882412910461 注目の的だ fg: (10, 18, 13) bg: (10, 18, 13)
+2026-03-25 18:33:12,512 - INFO - [manga-translator.Model48pxOCR] - prob: 0.9997718930244446 性格もいいし fg: (129, 19, 140) bg: (129, 19, 140)
+2026-03-25 18:33:12,522 - INFO - [manga-translator.Model48pxOCR] - prob: 0.9993062615394592 付き合いてえ fg: (126, 23, 137) bg: (126, 23, 137)
+2026-03-25 18:33:12,543 - INFO - [manga-translator.Model48pxOCR] - prob: 0.9997175931930542 ひなのは男子の fg: (19, 24, 23) bg: (19, 24, 23)
+2026-03-25 18:33:12,556 - INFO - [manga-translator.Model48pxOCR] - prob: 0.856806218624115 やさしいよな〜 fg: (128, 18, 137) bg: (242, 244, 241)
+2026-03-25 18:33:12,569 - INFO - [manga-translator.Model48pxOCR] - prob: 0.999756395816803 おっぱいでけえよな fg: (127, 22, 139) bg: (127, 22, 139)
+2026-03-25 18:33:12,585 - INFO - [manga-translator.Model48pxOCR] - prob: 0.6183493137359619 ひなのちゃんかわい〜 fg: (129, 22, 137) bg: (129, 22, 137)
+2026-03-25 18:33:15,164 - INFO - [manga_translator] - No pre-translation replacements made.
+2026-03-25 18:33:15,183 - INFO - [manga_translator] - JSON saved to: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07478_translations.json
+2026-03-25 18:33:15,384 - INFO - [root] - [进度] 3/3: 批量处理中 | 均速 3.5 秒/张 | 预计剩余 0秒
+2026-03-25 18:33:15,587 - INFO - [manga_translator] - 批量任务完成：已处理 3 张图片
+2026-03-25 18:33:15,587 - INFO - [app_logic] - OCR任务完成：成功处理 3/3 张
+2026-03-25 18:33:15,587 - INFO - [app_logic] - OCR结果已保存到：J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\result
+2026-03-25 18:33:15,589 - INFO - [root] - OCR任务完成，收到 3 个结果。正在保存...
+2026-03-25 18:33:15,589 - INFO - [root] - OCR任务完成。总共成功处理 3 个文件。
+2026-03-25 18:33:15,693 - DEBUG - [root] - 翻译完成后已调用 torch.cuda.empty_cache()
+2026-03-25 18:33:24,242 - DEBUG - [services.config_service] - 配置已更新，正在通知监听者...
+2026-03-25 18:33:24,640 - INFO - [root] - 即将开始后台任务，强制重新加载所有配置...
+2026-03-25 18:33:24,640 - INFO - [services.config_service] - 正在强制重新加载配置...
+2026-03-25 18:33:24,644 - INFO - [services.config_service] - .env 文件已从 D:\Ddown\manga-translator-ui-tongbu\.env 重新加载，环境变量已更新。
+2026-03-25 18:33:24,644 - INFO - [services.config_service] - 加载默认配置: D:\Ddown\manga-translator-ui-tongbu\examples\config-example.json
+2026-03-25 18:33:24,652 - DEBUG - [services.config_service] - 加载配置: config-example.json
+2026-03-25 18:33:24,653 - INFO - [services.config_service] - 加载用户配置: D:\Ddown\manga-translator-ui-tongbu\examples\config.json
+2026-03-25 18:33:24,661 - DEBUG - [services.config_service] - 加载配置: config.json
+2026-03-25 18:33:24,663 - INFO - [services.config_service] - 配置重载完成。
+2026-03-25 18:33:24,663 - INFO - [root] - 配置已刷新，继续执行任务。
+2026-03-25 18:33:24,668 - INFO - [root] - 文件扫描任务已启动
+2026-03-25 18:33:24,669 - INFO - [app_logic] - 正在扫描文件...
+2026-03-25 18:33:24,672 - INFO - [app_logic] - 正在扫描文件夹: OBB_labels
+2026-03-25 18:33:24,672 - INFO - [root] - 文件扫描完成，共找到 3 个文件
+2026-03-25 18:33:24,678 - INFO - [app_logic] - --- 开始处理任务...
+2026-03-25 18:33:24,678 - INFO - [root] - 翻译任务已启动 (任务ID: 4)
+2026-03-25 18:33:24,679 - DEBUG - [asyncio] - Using proactor: IocpProactor
+2026-03-25 18:33:24,680 - INFO - [app_logic] - --- 正在初始化翻译器...
+2026-03-25 18:33:24,681 - INFO - [app_logic] - --- 翻译器初始化完成
+2026-03-25 18:33:24,681 - INFO - [app_logic] - --- 配置对象创建完成
+2026-03-25 18:33:24,681 - INFO - [app_logic] - --- 开始批量处理 (批量模式)
+2026-03-25 18:33:24,681 - INFO - [app_logic] - 批量处理模式：共 3 张图片，分 1 个批次处理
+2026-03-25 18:33:24,682 - INFO - [app_logic] - 翻译流程：{mode}
+2026-03-25 18:33:24,682 - INFO - [app_logic] - 输出目录：J:/G/Desktop/OCRTEST/测试用10图
+2026-03-25 18:33:24,682 - INFO - [app_logic] - 提示：需要预先存在 JSON 数据。程序会从 JSON 读取原文并执行翻译，完成后回写 JSON，并删除图片名_original.txt。
+2026-03-25 18:33:24,682 - INFO - [app_logic] - 开始执行任务...
+2026-03-25 18:33:24,682 - INFO - [manga_translator] - 开始批量任务：共 3 张图片，批次大小 3
+2026-03-25 18:33:24,682 - INFO - [manga_translator] - [阶段] 批量翻译任务启动
+2026-03-25 18:33:24,682 - INFO - [manga_translator] - 模型清理任务已启动，models_ttl=0 秒
+2026-03-25 18:33:24,683 - INFO - [manga_translator] - 正在处理滚动批次 1/1（图片 1-3）
+2026-03-25 18:33:24,683 - INFO - [root] - [进度] 0/3: 批量处理中 | 等待首张完成后估算剩余时间
+2026-03-25 18:33:24,683 - INFO - [manga_translator] - [阶段] 开始处理批次 1/1
+2026-03-25 18:33:24,722 - INFO - [manga_translator] - Translate JSON only mode: Loading original text from JSON and skipping detection/OCR/rendering
+2026-03-25 18:33:24,991 - INFO - [manga_translator] - Loaded 0 regions from J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\0008_translations.json
+2026-03-25 18:33:24,991 - INFO - [manga_translator] - No pre-translation replacements made.
+2026-03-25 18:33:25,211 - INFO - [manga_translator] - Loaded 9 regions from J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07476_translations.json
+2026-03-25 18:33:25,211 - INFO - [manga_translator] - No pre-translation replacements made.
+2026-03-25 18:33:25,436 - INFO - [manga_translator] - Loaded 6 regions from J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07478_translations.json
+2026-03-25 18:33:25,436 - INFO - [manga_translator] - No pre-translation replacements made.
+2026-03-25 18:33:25,436 - INFO - [manga_translator] - [阶段] JSON 原文加载完成，开始翻译阶段
+2026-03-25 18:33:25,437 - INFO - [manga_translator] - Processing translation batch 1/1
+2026-03-25 18:33:25,437 - INFO - [manga_translator] - Running text translation
+2026-03-25 18:33:25,445 - INFO - [manga_translator] - Successfully loaded custom HQ prompt from: D:\Ddown\manga-translator-ui-tongbu\dict/prompt_example.yaml
+2026-03-25 18:33:25,448 - INFO - [manga_translator] - AI line breaking is enabled. Loaded line break prompt.
+2026-03-25 18:33:25,545 - INFO - [manga-translator.OpenAITranslator] - 已加载自定义API参数配置: {'translator': {'temperature': 0.3, 'top_p': 0.95}, 'ocr': {'temperature': 0.0}}
+2026-03-25 18:33:25,545 - INFO - [manga-translator.OpenAITranslator] - 已启用自定义API参数[translator]: {'temperature': 0.3, 'top_p': 0.95}
+2026-03-25 18:33:25,545 - INFO - [manga_translator] - Context-aware translation enabled with 3 pages of history
+2026-03-25 18:33:25,545 - INFO - [manga-translator.OpenAITranslator] - 使用OpenAI纯文本翻译模式处理15个文本，最大尝试次数: 4
+2026-03-25 18:33:25,569 - INFO - [manga-translator.OpenAITranslator] - [Context] None
+2026-03-25 18:33:25,570 - INFO - [manga-translator.OpenAITranslator] - 已禁用流式传输，使用普通请求。
+2026-03-25 18:33:41,765 - INFO - [manga_translator] - Extracted JSON payload from mixed response text
+2026-03-25 18:33:41,765 - INFO - [manga-translator.OpenAITranslator] - --- Translation Results ---
+2026-03-25 18:33:41,765 - INFO - [manga-translator.OpenAITranslator] - 卒業したら：ひなのに告白する！ -> 毕业后[BR]要向雏乃告白！
+2026-03-25 18:33:41,765 - INFO - [manga-translator.OpenAITranslator] - ほら１週間前から留学生の子がウチに -> 你看[BR]一周前开始有个留学生来我家
+2026-03-25 18:33:41,765 - INFO - [manga-translator.OpenAITranslator] - ホームステイしてるって -> 寄宿对吧？
+2026-03-25 18:33:41,766 - INFO - [manga-translator.OpenAITranslator] - 言ったでしょ？ -> 我说过的吧？
+2026-03-25 18:33:41,766 - INFO - [manga-translator.OpenAITranslator] - その子が -> 那孩子啊
+2026-03-25 18:33:41,766 - INFO - [manga-translator.OpenAITranslator] - ご飯作ってくれたけどすごい美味しかったの！ -> 做了饭给我吃[BR]超级好吃的！
+2026-03-25 18:33:41,766 - INFO - [manga-translator.OpenAITranslator] - スパイスがいっぱい入ってて -> 放了好多香料
+2026-03-25 18:33:41,766 - INFO - [manga-translator.OpenAITranslator] - 初めての味だったなぁ -> 还是第一次尝到那种味道呢
+2026-03-25 18:33:41,766 - INFO - [manga-translator.OpenAITranslator] - へぇ〜 -> 嘿～
+2026-03-25 18:33:41,766 - INFO - [manga-translator.OpenAITranslator] - 学校ではひなのは男子の注目の的だ -> 在学校里[BR]雏乃是男生们[BR]瞩目的焦点
+2026-03-25 18:33:41,766 - INFO - [manga-translator.OpenAITranslator] - ひなのちゃんかわい〜 -> 雏乃酱好可爱～
+2026-03-25 18:33:41,766 - INFO - [manga-translator.OpenAITranslator] - 付き合いてえ -> 好想和她交往
+2026-03-25 18:33:41,766 - INFO - [manga-translator.OpenAITranslator] - おっぱいでけえよな -> 胸好大啊
+2026-03-25 18:33:41,766 - INFO - [manga-translator.OpenAITranslator] - 性格もいいし -> 性格也很好
+2026-03-25 18:33:41,767 - INFO - [manga-translator.OpenAITranslator] - やさしいよな〜 -> 很温柔呢～
+2026-03-25 18:33:41,767 - INFO - [manga-translator.OpenAITranslator] - ---------------------------
+2026-03-25 18:33:41,769 - INFO - [manga_translator] - No post-translation replacements made.
+2026-03-25 18:33:41,769 - INFO - [manga_translator] - No post-translation replacements made.
+2026-03-25 18:33:41,771 - INFO - [manga_translator] - JSON saved to: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\0008_translations.json
+2026-03-25 18:33:41,953 - INFO - [root] - [进度] 1/3: 批量处理中 | 均速 17.1 秒/张 | 预计剩余 34秒
+2026-03-25 18:33:41,967 - INFO - [manga_translator] - JSON saved to: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07476_translations.json
+2026-03-25 18:33:42,143 - INFO - [root] - [进度] 2/3: 批量处理中 | 均速 8.6 秒/张 | 预计剩余 9秒
+2026-03-25 18:33:42,152 - INFO - [manga_translator] - JSON saved to: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07478_translations.json
+2026-03-25 18:33:42,332 - INFO - [root] - [进度] 3/3: 批量处理中 | 均速 5.8 秒/张 | 预计剩余 0秒
+2026-03-25 18:33:42,544 - INFO - [manga_translator] - 批量任务完成：已处理 3 张图片
+2026-03-25 18:33:42,544 - INFO - [app_logic] - 批量翻译完成：成功 3/3 张
+2026-03-25 18:33:42,544 - INFO - [app_logic] - 文件已保存到：J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\result
+2026-03-25 18:33:42,545 - INFO - [root] - 批量翻译任务完成，收到 3 个结果。正在保存...
+2026-03-25 18:33:42,546 - INFO - [root] - 翻译任务完成。总共成功处理 3 个文件。
+2026-03-25 18:33:42,648 - DEBUG - [root] - 翻译完成后已调用 torch.cuda.empty_cache()
+2026-03-25 18:33:48,074 - DEBUG - [services.config_service] - 配置已更新，正在通知监听者...
+2026-03-25 18:33:48,560 - INFO - [root] - 即将开始后台任务，强制重新加载所有配置...
+2026-03-25 18:33:48,561 - INFO - [services.config_service] - 正在强制重新加载配置...
+2026-03-25 18:33:48,563 - INFO - [services.config_service] - .env 文件已从 D:\Ddown\manga-translator-ui-tongbu\.env 重新加载，环境变量已更新。
+2026-03-25 18:33:48,563 - INFO - [services.config_service] - 加载默认配置: D:\Ddown\manga-translator-ui-tongbu\examples\config-example.json
+2026-03-25 18:33:48,572 - DEBUG - [services.config_service] - 加载配置: config-example.json
+2026-03-25 18:33:48,572 - INFO - [services.config_service] - 加载用户配置: D:\Ddown\manga-translator-ui-tongbu\examples\config.json
+2026-03-25 18:33:48,581 - DEBUG - [services.config_service] - 加载配置: config.json
+2026-03-25 18:33:48,583 - INFO - [services.config_service] - 配置重载完成。
+2026-03-25 18:33:48,583 - INFO - [root] - 配置已刷新，继续执行任务。
+2026-03-25 18:33:48,591 - INFO - [root] - 文件扫描任务已启动
+2026-03-25 18:33:48,592 - INFO - [app_logic] - 正在扫描文件...
+2026-03-25 18:33:48,592 - INFO - [app_logic] - 正在扫描文件夹: OBB_labels
+2026-03-25 18:33:48,596 - INFO - [root] - 文件扫描完成，共找到 3 个文件
+2026-03-25 18:33:48,599 - INFO - [app_logic] - --- 开始处理任务...
+2026-03-25 18:33:48,600 - INFO - [root] - 翻译任务已启动 (任务ID: 5)
+2026-03-25 18:33:48,600 - DEBUG - [asyncio] - Using proactor: IocpProactor
+2026-03-25 18:33:48,601 - INFO - [app_logic] - --- 正在初始化翻译器...
+2026-03-25 18:33:48,602 - INFO - [app_logic] - --- 翻译器初始化完成
+2026-03-25 18:33:48,603 - INFO - [app_logic] - --- 配置对象创建完成
+2026-03-25 18:33:48,603 - INFO - [app_logic] - --- 开始批量处理 (批量模式)
+2026-03-25 18:33:48,603 - INFO - [app_logic] - 批量处理模式：共 3 张图片，分 1 个批次处理
+2026-03-25 18:33:48,603 - INFO - [app_logic] - 翻译流程：{mode}
+2026-03-25 18:33:48,603 - INFO - [app_logic] - 输出目录：J:/G/Desktop/OCRTEST/测试用10图
+2026-03-25 18:33:48,603 - INFO - [app_logic] - 提示：先导入翻译 JSON，仅生成/精修掩膜 PNG，不输出渲染文本图。
+2026-03-25 18:33:48,603 - INFO - [app_logic] - 开始执行任务...
+2026-03-25 18:33:48,603 - INFO - [manga_translator] - Load text mode detected: Auto-importing translations from TXT to JSON...
+2026-03-25 18:33:48,604 - INFO - [root] - [进度] 0/3: 批量处理中 | 等待首张完成后估算剩余时间
+2026-03-25 18:33:48,607 - INFO - [manga_translator] - 开始批量任务：共 3 张图片，批次大小 3
+2026-03-25 18:33:48,608 - INFO - [manga_translator] - [阶段] 批量翻译任务启动
+2026-03-25 18:33:48,608 - INFO - [manga_translator] - 模型清理任务已启动，models_ttl=0 秒
+2026-03-25 18:33:48,608 - INFO - [manga_translator] - 正在处理滚动批次 1/1（图片 1-3）
+2026-03-25 18:33:48,608 - INFO - [manga_translator] - [阶段] 开始处理批次 1/1
+2026-03-25 18:33:48,655 - INFO - [manga_translator] - Load text mode: Loading translations from JSON and skipping detection/OCR/translation
+2026-03-25 18:33:48,923 - INFO - [manga_translator] - Loaded 0 regions from J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\0008_translations.json
+2026-03-25 18:33:48,923 - INFO - [manga_translator] - No text regions found in JSON for 0008.jpg, will render original image
+2026-03-25 18:33:48,969 - INFO - [manga_translator] - No text regions to render for 0008.jpg, returning original image
+2026-03-25 18:33:48,970 - INFO - [manga_translator] - JSON saved to: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\0008_translations.json
+2026-03-25 18:33:49,371 - INFO - [manga_translator] - Loaded 9 regions from J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07476_translations.json
+2026-03-25 18:33:49,402 - INFO - [manga_translator] - 导入 YOLO 标注: file=J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\OSQC07476.txt, boxes=12, skipped=0
+2026-03-25 18:33:58,562 - INFO - [manga-translator.DefaultDetector] - Detection resolution: 2048x1536
+2026-03-25 18:34:00,118 - INFO - [manga_translator] - Bubble cache primed during detection stage: detections=3
+2026-03-25 18:34:00,119 - INFO - [manga_translator] - Load text mode: generated mask from detection because JSON has no mask
+2026-03-25 18:34:00,149 - INFO - [manga_translator] - Running mask refinement
+2026-03-25 18:34:05,232 - INFO - [manga_translator] - Saved mask PNG: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\mask\OSQC07476.png
+2026-03-25 18:34:05,250 - INFO - [manga_translator] - JSON saved to: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07476_translations.json
+2026-03-25 18:34:06,715 - INFO - [manga_translator] - Loaded 6 regions from J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07478_translations.json
+2026-03-25 18:34:06,764 - INFO - [manga_translator] - 导入 YOLO 标注: file=J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\OSQC07478.txt, boxes=8, skipped=0
+2026-03-25 18:34:12,930 - INFO - [manga-translator.DefaultDetector] - Detection resolution: 2048x1536
+2026-03-25 18:34:13,403 - INFO - [manga_translator] - Bubble cache primed during detection stage: detections=5
+2026-03-25 18:34:13,404 - INFO - [manga_translator] - Load text mode: generated mask from detection because JSON has no mask
+2026-03-25 18:34:13,419 - INFO - [manga_translator] - Running mask refinement
+2026-03-25 18:34:15,834 - INFO - [manga_translator] - Saved mask PNG: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\mask\OSQC07478.png
+2026-03-25 18:34:15,838 - INFO - [manga_translator] - JSON saved to: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07478_translations.json
+2026-03-25 18:34:16,024 - INFO - [root] - [进度] 1/3: 批量处理中 | 均速 27.4 秒/张 | 预计剩余 55秒
+2026-03-25 18:34:16,249 - INFO - [root] - [进度] 2/3: 批量处理中 | 均速 13.7 秒/张 | 预计剩余 14秒
+2026-03-25 18:34:16,251 - INFO - [manga_translator] - 批量任务完成：已处理 3 张图片
+2026-03-25 18:34:16,251 - INFO - [app_logic] - 批量翻译完成：成功 3/3 张
+2026-03-25 18:34:16,252 - INFO - [app_logic] - 文件已保存到：J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\mask
+2026-03-25 18:34:16,252 - INFO - [root] - [进度] 3/3: 批量处理中 | 均速 9.1 秒/张 | 预计剩余 0秒
+2026-03-25 18:34:16,257 - INFO - [root] - 批量翻译任务完成，收到 3 个结果。正在保存...
+2026-03-25 18:34:16,258 - INFO - [root] - 翻译任务完成。总共成功处理 3 个文件。
+2026-03-25 18:34:16,361 - DEBUG - [root] - 翻译完成后已调用 torch.cuda.empty_cache()
+2026-03-25 18:34:23,611 - DEBUG - [services.config_service] - 配置已更新，正在通知监听者...
+2026-03-25 18:34:24,273 - INFO - [root] - 即将开始后台任务，强制重新加载所有配置...
+2026-03-25 18:34:24,273 - INFO - [services.config_service] - 正在强制重新加载配置...
+2026-03-25 18:34:24,274 - INFO - [services.config_service] - .env 文件已从 D:\Ddown\manga-translator-ui-tongbu\.env 重新加载，环境变量已更新。
+2026-03-25 18:34:24,275 - INFO - [services.config_service] - 加载默认配置: D:\Ddown\manga-translator-ui-tongbu\examples\config-example.json
+2026-03-25 18:34:24,283 - DEBUG - [services.config_service] - 加载配置: config-example.json
+2026-03-25 18:34:24,283 - INFO - [services.config_service] - 加载用户配置: D:\Ddown\manga-translator-ui-tongbu\examples\config.json
+2026-03-25 18:34:24,292 - DEBUG - [services.config_service] - 加载配置: config.json
+2026-03-25 18:34:24,294 - INFO - [services.config_service] - 配置重载完成。
+2026-03-25 18:34:24,294 - INFO - [root] - 配置已刷新，继续执行任务。
+2026-03-25 18:34:24,300 - INFO - [root] - 文件扫描任务已启动
+2026-03-25 18:34:24,301 - INFO - [app_logic] - 正在扫描文件...
+2026-03-25 18:34:24,303 - INFO - [app_logic] - 正在扫描文件夹: OBB_labels
+2026-03-25 18:34:24,304 - INFO - [root] - 文件扫描完成，共找到 3 个文件
+2026-03-25 18:34:24,306 - INFO - [app_logic] - --- 开始处理任务...
+2026-03-25 18:34:24,307 - INFO - [root] - 翻译任务已启动 (任务ID: 6)
+2026-03-25 18:34:24,307 - DEBUG - [asyncio] - Using proactor: IocpProactor
+2026-03-25 18:34:24,308 - INFO - [app_logic] - --- 正在初始化翻译器...
+2026-03-25 18:34:24,309 - INFO - [app_logic] - --- 翻译器初始化完成
+2026-03-25 18:34:24,310 - INFO - [app_logic] - --- 配置对象创建完成
+2026-03-25 18:34:24,310 - INFO - [app_logic] - --- 开始批量处理 (批量模式)
+2026-03-25 18:34:24,310 - INFO - [app_logic] - 批量处理模式：共 3 张图片，分 1 个批次处理
+2026-03-25 18:34:24,310 - INFO - [app_logic] - 翻译流程：{mode}
+2026-03-25 18:34:24,310 - INFO - [app_logic] - 输出目录：J:/G/Desktop/OCRTEST/测试用10图
+2026-03-25 18:34:24,310 - INFO - [app_logic] - 提示：使用 JSON（mask_file）中的现有掩膜 PNG 执行修复与渲染，不会自动重新生成掩膜。
+2026-03-25 18:34:24,311 - INFO - [app_logic] - 开始执行任务...
+2026-03-25 18:34:24,311 - INFO - [manga_translator] - Load text mode detected: Auto-importing translations from TXT to JSON...
+2026-03-25 18:34:24,311 - INFO - [root] - [进度] 0/3: 批量处理中 | 等待首张完成后估算剩余时间
+2026-03-25 18:34:24,314 - INFO - [manga_translator] - 开始批量任务：共 3 张图片，批次大小 3
+2026-03-25 18:34:24,314 - INFO - [manga_translator] - [阶段] 批量翻译任务启动
+2026-03-25 18:34:24,315 - INFO - [manga_translator] - 模型清理任务已启动，models_ttl=0 秒
+2026-03-25 18:34:24,315 - INFO - [manga_translator] - 正在处理滚动批次 1/1（图片 1-3）
+2026-03-25 18:34:24,315 - INFO - [manga_translator] - [阶段] 开始处理批次 1/1
+2026-03-25 18:34:24,351 - INFO - [manga_translator] - Load text mode: Loading translations from JSON and skipping detection/OCR/translation
+2026-03-25 18:34:24,618 - INFO - [manga_translator] - Loaded 0 regions from J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\0008_translations.json
+2026-03-25 18:34:24,618 - INFO - [manga_translator] - No text regions found in JSON for 0008.jpg, will render original image
+2026-03-25 18:34:24,632 - WARNING - [manga_translator] - [仅渲染] 未找到掩膜，已跳过：0008.jpg
+2026-03-25 18:34:25,037 - INFO - [manga_translator] - Loaded 9 regions from J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07476_translations.json
+2026-03-25 18:34:25,038 - INFO - [manga_translator] - Loaded mask_file from J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07476_translations.json
+2026-03-25 18:34:25,274 - INFO - [manga_translator] - Bubble cache primed during detection stage: detections=3
+2026-03-25 18:34:25,282 - INFO - [manga_translator] - Running inpainting
+2026-03-25 18:34:25,282 - INFO - [manga_translator] - [修复] inpainter=Inpainter.default, precision=fp32, inpainting_size=2048, image_shape=(1275, 1800), mask_shape=(1275, 1800)
+2026-03-25 18:34:25,768 - INFO - [manga-translator.AotInpainter] - Inpainting resolution: 1800x1280
+2026-03-25 18:34:27,674 - INFO - [manga_translator] - Running rendering
+2026-03-25 18:34:28,762 - INFO - [manga_translator] - Saved mask PNG: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\mask\OSQC07476.png
+2026-03-25 18:34:28,764 - INFO - [manga_translator] - JSON saved to: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07476_translations.json
+2026-03-25 18:34:29,200 - INFO - [manga_translator] - Loaded 6 regions from J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07478_translations.json
+2026-03-25 18:34:29,201 - INFO - [manga_translator] - Loaded mask_file from J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07478_translations.json
+2026-03-25 18:34:29,387 - INFO - [manga_translator] - Bubble cache primed during detection stage: detections=5
+2026-03-25 18:34:29,396 - INFO - [manga_translator] - Running inpainting
+2026-03-25 18:34:29,396 - INFO - [manga_translator] - [修复] inpainter=Inpainter.default, precision=fp32, inpainting_size=2048, image_shape=(1275, 1800), mask_shape=(1275, 1800)
+2026-03-25 18:34:29,647 - INFO - [manga-translator.AotInpainter] - Inpainting resolution: 1800x1280
+2026-03-25 18:34:31,890 - INFO - [manga_translator] - Running rendering
+2026-03-25 18:34:32,640 - INFO - [manga_translator] - Saved mask PNG: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\mask\OSQC07478.png
+2026-03-25 18:34:32,642 - INFO - [manga_translator] - JSON saved to: J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\json\OSQC07478_translations.json
+2026-03-25 18:34:32,812 - INFO - [root] - [进度] 1/3: 批量处理中 | 均速 8.5 秒/张 | 预计剩余 17秒
+2026-03-25 18:34:32,839 - INFO - [manga_translator] -   -> [LOAD_TEXT] 保存成功: OSQC07476.jpg
+2026-03-25 18:34:32,841 - INFO - [root] - [进度] 2/3: 批量处理中 | 均速 4.3 秒/张 | 预计剩余 4秒
+2026-03-25 18:34:32,864 - INFO - [manga_translator] -   -> [LOAD_TEXT] 保存成功: OSQC07478.jpg
+2026-03-25 18:34:33,085 - INFO - [root] - [进度] 3/3: 批量处理中 | 均速 2.9 秒/张 | 预计剩余 0秒
+2026-03-25 18:34:33,086 - INFO - [manga_translator] - 批量任务完成：已处理 3 张图片
+2026-03-25 18:34:33,087 - INFO - [app_logic] - 图片 0008.jpg 已跳过
+2026-03-25 18:34:33,087 - INFO - [app_logic] - 批量翻译完成：成功 2/3 张
+2026-03-25 18:34:33,087 - INFO - [app_logic] - 文件已保存到：J:\G\Desktop\OCRTEST\2026-03-25 01-31-15\OBB_labels\manga_translator_work\result
+2026-03-25 18:34:33,091 - INFO - [root] - 批量翻译任务完成，收到 3 个结果。正在保存...
+2026-03-25 18:34:33,091 - INFO - [root] - 翻译任务完成。总共成功处理 2 个文件。
+2026-03-25 18:34:33,196 - DEBUG - [root] - 翻译完成后已调用 torch.cuda.empty_cache()

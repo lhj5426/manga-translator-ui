@@ -390,14 +390,22 @@ class EditorView(QWidget):
     @pyqtSlot(list)
     def update_file_list(self, files: list):
         """Clears and repopulates the file list view based on a signal from the logic."""
-        self.file_list.clear()
-        self.file_list.add_files(files)
+        previous_block = self.file_list.blockSignals(True)
+        try:
+            self.file_list.clear()
+            self.file_list.add_files(files)
+        finally:
+            self.file_list.blockSignals(previous_block)
     
     @pyqtSlot(list, dict)
     def update_file_list_with_tree(self, files: list, folder_tree: dict):
         """使用树形结构更新文件列表"""
-        self.file_list.clear()
-        self.file_list.add_files_from_tree(folder_tree)
+        previous_block = self.file_list.blockSignals(True)
+        try:
+            self.file_list.clear()
+            self.file_list.add_files_from_tree(folder_tree)
+        finally:
+            self.file_list.blockSignals(previous_block)
 
     def _apply_editor_style(self, theme: str | None = None):
         """编辑器局部样式：根据主题应用配色，与主页风格统一。"""

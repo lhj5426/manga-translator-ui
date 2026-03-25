@@ -399,6 +399,10 @@ class CliConfig(BaseModel):
     """Replace translation mode: apply translation from one image to another raw image"""
     translate_json_only: bool = False
     """Translate existing JSON only: read original text from JSON, translate, and write back JSON"""
+    import_yolo_only: bool = False
+    """Import YOLO labels only: load and persist reusable detection boxes without OCR"""
+    ocr_only: bool = False
+    """OCR only: load saved detection boxes from JSON and run OCR without detection"""
 
 class OcrConfig(BaseModel):
     ocr: Ocr = Ocr.ocr48px

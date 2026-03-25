@@ -7,6 +7,7 @@
 
 import asyncio
 import copy
+import inspect
 import json
 import logging
 import os
@@ -410,6 +411,15 @@ class ExportService:
     
     def _save_regions_data_internal(self, regions_data: List[Dict[str, Any]], json_path: str, image_key: str, mask: Optional[np.ndarray] = None, config: Optional[Dict[str, Any]] = None):
         """保存区域数据到JSON文件的内部实现"""
+        caller_names = " > ".join(frame.function for frame in inspect.stack()[1:6])
+        self.logger.warning(
+            "TRACE save_json export_write: json=%s image_key=%s regions=%d mask=%s callers=%s",
+            json_path,
+            image_key,
+            len(regions_data or []),
+            mask is not None,
+            caller_names,
+        )
         # 获取超分倍率，用于放大坐标
         upscale_ratio = 1
         default_region_font_path = ''
@@ -421,6 +431,7 @@ class ExportService:
         
         # 准备保存数据，确保数据格式正确
         save_data = []
+        textlines_data = []
         for idx, region in enumerate(regions_data):
             region_copy = region.copy()
 
@@ -469,6 +480,33 @@ class ExportService:
                 if valid_polygons:
                     # 恢复到正确的 (N, 4, 2) 形状
                     region_copy['lines'] = np.array(valid_polygons, dtype=np.float64)
+                    first_poly = valid_polygons[0]
+                    fg_tuple_for_textline = region_copy.get('fg_colors') or region_copy.get('fg_color') or [0, 0, 0]
+                    bg_tuple_for_textline = region_copy.get('bg_colors') or region_copy.get('bg_color') or [0, 0, 0]
+                    if not isinstance(fg_tuple_for_textline, (list, tuple)):
+                        fg_tuple_for_textline = [0, 0, 0]
+                    if not isinstance(bg_tuple_for_textline, (list, tuple)):
+                        bg_tuple_for_textline = [0, 0, 0]
+                    fg_tuple_for_textline = list(fg_tuple_for_textline)[:3] + [0] * max(0, 3 - len(fg_tuple_for_textline))
+                    bg_tuple_for_textline = list(bg_tuple_for_textline)[:3] + [0] * max(0, 3 - len(bg_tuple_for_textline))
+                    direction_value = region_copy.get('direction')
+                    if direction_value == 'vertical':
+                        direction_value = 'v'
+                    elif direction_value == 'horizontal':
+                        direction_value = 'h'
+                    textlines_data.append({
+                        'pts': [[float(point[0]), float(point[1])] for point in first_poly],
+                        'text': str(region_copy.get('text', '') or ''),
+                        'prob': float(region_copy.get('prob', 1.0) or 1.0),
+                        'fg_colors': [int(fg_tuple_for_textline[0]), int(fg_tuple_for_textline[1]), int(fg_tuple_for_textline[2])],
+                        'bg_colors': [int(bg_tuple_for_textline[0]), int(bg_tuple_for_textline[1]), int(bg_tuple_for_textline[2])],
+                        'direction': direction_value,
+                        'assigned_direction': direction_value,
+                        'is_yolo_box': bool(region_copy.get('is_yolo_box', False)),
+                        'imported_yolo_box': bool(region_copy.get('imported_yolo_box', False)),
+                        'det_label': region_copy.get('det_label'),
+                        'yolo_label': region_copy.get('yolo_label'),
+                    })
                 else:
                     self.logger.warning(f"No valid polygons found in region: {region_copy}")
                     continue
@@ -551,9 +589,27 @@ class ExportService:
         # image_key 由调用方传入（可以是完整路径或文件名）
         formatted_data = {
             image_key: {
-                'regions': save_data
+                'regions': save_data,
+                'textlines': textlines_data,
             }
         }
+
+        existing_image_data = None
+        if os.path.exists(json_path):
+            try:
+                with open(json_path, 'r', encoding='utf-8') as f:
+                    existing_root = json.load(f)
+                if isinstance(existing_root, dict):
+                    existing_image_data = existing_root.get(image_key)
+                    if existing_image_data is None and existing_root:
+                        existing_image_data = next(iter(existing_root.values()), None)
+            except Exception as e:
+                self.logger.warning(f"Failed to read existing JSON before editor save: {json_path}, error={e}")
+
+        if isinstance(existing_image_data, dict):
+            for preserved_key in ('original_width', 'original_height', 'skip_font_scaling', 'upscale_ratio', 'upscaler', 'colorizer'):
+                if preserved_key in existing_image_data and preserved_key not in formatted_data[image_key]:
+                    formatted_data[image_key][preserved_key] = existing_image_data[preserved_key]
         
         # 添加超分和上色配置信息
         if config:
@@ -583,11 +639,11 @@ class ExportService:
             mask_base64 = base64.b64encode(encoded_mask).decode('utf-8')
             formatted_data[image_key]['mask_raw'] = mask_base64
             formatted_data[image_key]['mask_is_refined'] = True  # 标记为已精炼的蒙版，跳过后端的蒙版优化
-            self.logger.info("蒙版已保存（base64编码），标记为已精炼，后端将跳过蒙版优化")
+            self.logger.debug("蒙版已保存（base64编码），标记为已精炼，后端将跳过蒙版优化")
 
         # 添加调试信息
-        self.logger.info(f"保存区域数据到: {json_path}")
-        self.logger.info(f"区域数量: {len(save_data)}")
+        self.logger.debug(f"保存区域数据到: {json_path}")
+        self.logger.debug(f"区域数量: {len(save_data)}")
         
         with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(formatted_data, f, indent=2, ensure_ascii=False, cls=CustomJSONEncoder)
@@ -976,5 +1032,3 @@ def get_export_service() -> ExportService:
     if _export_service is None:
         _export_service = ExportService()
     return _export_service
-
-

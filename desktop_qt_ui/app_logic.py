@@ -267,7 +267,7 @@ class MainAppLogic(QObject):
         )
 
     def _record_task_failure_from_result(self, result: Dict[str, Any]):
-        if not result or result.get("success"):
+        if not result or result.get("success") or result.get("skipped"):
             return
         self._record_task_failure(result.get("original_path"), result.get("error"))
 
@@ -283,6 +283,10 @@ class MainAppLogic(QObject):
     @pyqtSlot(dict)
     def on_file_completed(self, result):
         """处理单个文件处理完成的信号并保存"""
+        if result.get('skipped'):
+            self.logger.info(f"Skipped file: {result.get('original_path')}")
+            return
+
         if not result.get('success'):
             self._record_task_failure_from_result(result)
             self.logger.error(f"Skipping save for failed item: {result.get('original_path')}")
@@ -503,6 +507,101 @@ class MainAppLogic(QObject):
         
         final_output_path = os.path.join(final_output_dir, output_filename)
         return final_output_path
+
+    def _resolve_saved_location_for_log(self, results: list, save_info: dict) -> str:
+        cli_cfg = self.config_dict.get('cli', {}) if isinstance(self.config_dict, dict) else {}
+        save_to_source_dir = bool(save_info.get('save_to_source_dir', False))
+
+        if save_to_source_dir:
+            if bool(cli_cfg.get('load_text_generate_mask_only', False)):
+                sub_parts = ('manga_translator_work', 'mask')
+            elif bool(cli_cfg.get('generate_and_export', False)):
+                sub_parts = ('manga_translator_work', 'translations')
+            elif bool(cli_cfg.get('template', False)) and bool(cli_cfg.get('save_text', False)):
+                sub_parts = ('manga_translator_work', 'originals')
+            elif bool(cli_cfg.get('export_editable_psd', False)):
+                sub_parts = ('manga_translator_work', 'psd')
+            else:
+                sub_parts = ('manga_translator_work', 'result')
+
+            base_dirs = []
+            for item in results or []:
+                if not isinstance(item, dict) or not item.get('success'):
+                    continue
+                original_path = item.get('original_path')
+                if isinstance(original_path, str) and original_path.strip():
+                    base_dirs.append(os.path.normpath(os.path.dirname(original_path)))
+
+            if not base_dirs:
+                return self.output_folder
+
+            concrete_dirs = sorted(set(os.path.join(d, *sub_parts) for d in base_dirs))
+            if len(concrete_dirs) == 1:
+                return concrete_dirs[0]
+            return f"多个目录（{len(concrete_dirs)} 个），示例：{concrete_dirs[0]}"
+
+        out_dirs = []
+        for item in results or []:
+            if not isinstance(item, dict) or not item.get('success'):
+                continue
+            output_path = item.get('output_path')
+            if isinstance(output_path, str) and output_path.strip():
+                out_dirs.append(os.path.normpath(os.path.dirname(output_path)))
+
+        if not out_dirs:
+            return self.output_folder
+        unique_out_dirs = sorted(set(out_dirs))
+        if len(unique_out_dirs) == 1:
+            return unique_out_dirs[0]
+        return f"多个目录（{len(unique_out_dirs)} 个），示例：{unique_out_dirs[0]}"
+
+    def _resolve_saved_location_for_log(self, results: list, save_info: dict) -> str:
+        cli_cfg = self.config_dict.get('cli', {}) if isinstance(self.config_dict, dict) else {}
+        save_to_source_dir = bool(save_info.get('save_to_source_dir', False))
+
+        if save_to_source_dir:
+            if bool(cli_cfg.get('load_text_generate_mask_only', False)):
+                sub_parts = ('manga_translator_work', 'mask')
+            elif bool(cli_cfg.get('generate_and_export', False)):
+                sub_parts = ('manga_translator_work', 'translations')
+            elif bool(cli_cfg.get('template', False)) and bool(cli_cfg.get('save_text', False)):
+                sub_parts = ('manga_translator_work', 'originals')
+            elif bool(cli_cfg.get('export_editable_psd', False)):
+                sub_parts = ('manga_translator_work', 'psd')
+            else:
+                sub_parts = ('manga_translator_work', 'result')
+
+            base_dirs = []
+            for item in results or []:
+                if not isinstance(item, dict) or not item.get('success'):
+                    continue
+                original_path = item.get('original_path')
+                if isinstance(original_path, str) and original_path.strip():
+                    base_dirs.append(os.path.normpath(os.path.dirname(original_path)))
+
+            if not base_dirs:
+                return self.output_folder
+
+            concrete_dirs = sorted(set(os.path.join(d, *sub_parts) for d in base_dirs))
+            if len(concrete_dirs) == 1:
+                return concrete_dirs[0]
+            return f"多个目录（{len(concrete_dirs)} 个），示例：{concrete_dirs[0]}"
+
+        # save_to_source_dir = False: prefer actual output_path directories from results
+        out_dirs = []
+        for item in results or []:
+            if not isinstance(item, dict) or not item.get('success'):
+                continue
+            output_path = item.get('output_path')
+            if isinstance(output_path, str) and output_path.strip():
+                out_dirs.append(os.path.normpath(os.path.dirname(output_path)))
+
+        if not out_dirs:
+            return self.output_folder
+        unique_out_dirs = sorted(set(out_dirs))
+        if len(unique_out_dirs) == 1:
+            return unique_out_dirs[0]
+        return f"多个目录（{len(unique_out_dirs)} 个），示例：{unique_out_dirs[0]}"
 
     @pyqtSlot(str)
     def on_worker_log(self, message):
@@ -1312,6 +1411,10 @@ class MainAppLogic(QObject):
                 'strict': self._t("layout_mode_strict"),
                 'balloon_fill': self._t("layout_mode_balloon_fill")
             },
+            "mask_output_mode": {
+                "black": self._t("mask_output_mode_black"),
+                "transparent": self._t("mask_output_mode_transparent"),
+            },
                 "realcugan_model": {
                     "2x-conservative": self._t("realcugan_2x_conservative"),
                     "2x-conservative-pro": self._t("realcugan_2x_conservative_pro"),
@@ -1457,6 +1560,8 @@ class MainAppLogic(QObject):
                     "skip_no_text": self._t("label_skip_no_text"),
                     "save_text": self._t("label_save_text"),
                     "load_text": self._t("label_load_text"),
+                    "mask_output_mode": self._t("label_mask_output_mode"),
+                    "mask_region_color": self._t("label_mask_region_color"),
                     "translate_json_only": self._t("label_translate_json_only"),
                     "template": self._t("label_template"),
                     "save_quality": self._t("label_save_quality"),
@@ -1468,6 +1573,7 @@ class MainAppLogic(QObject):
                     "save_to_source_dir": self._t("label_save_to_source_dir"),
                     "psd_font": self._t("label_psd_font"),
                     "psd_script_only": self._t("label_psd_script_only"),
+                    "read_all_subfolders": self._t("label_read_all_subfolders"),
                     "line_spacing": self._t("label_line_spacing"),
                     "letter_spacing": self._t("label_letter_spacing"),
                     "font_size": self._t("label_font_size"),
@@ -1544,6 +1650,7 @@ class MainAppLogic(QObject):
                 "Polish",
                 "Ukrainian",
             ],
+            "mask_output_mode": ["black", "transparent"],
         }
         return options_map.get(key)
     @pyqtSlot()
@@ -1824,7 +1931,13 @@ class MainAppLogic(QObject):
                     # 2. 添加文件夹内的其他文件
                     
                     # 获取文件夹内的所有图片文件
-                    folder_files = self.file_service.get_image_files_from_folder(parent_folder, recursive=True)
+                    folder_files = self.file_service.get_image_files_from_folder(
+                        parent_folder,
+                        recursive=True,
+                        read_all_subfolders=bool(
+                            getattr(self.config_service.get_config().app, "read_all_subfolders", True)
+                        ),
+                    )
                     
                     # 移除要删除的文件
                     remaining_files = [f for f in folder_files if os.path.normpath(f) != norm_file_path]
@@ -1918,11 +2031,16 @@ class MainAppLogic(QObject):
             subdirs = []
             files = []
             
+            read_all_subfolders = bool(
+                getattr(self.config_service.get_config().app, "read_all_subfolders", True)
+            )
             for item in items:
-                if item == 'manga_translator_work':
-                    continue
-                
                 item_path = os.path.join(folder_path, item)
+                if os.path.isdir(item_path):
+                    if item.lower() == 'manga_translator_work':
+                        continue
+                    if not read_all_subfolders:
+                        continue
                 norm_item_path = os.path.normpath(item_path)
                 
                 if os.path.isdir(item_path):
@@ -1955,12 +2073,16 @@ class MainAppLogic(QObject):
         """启动后台文件扫描任务"""
         self.state_manager.set_translating(True)
         self.state_manager.set_status_message("正在准备文件...")
+        read_all_subfolders = bool(
+            getattr(self.config_service.get_config().app, "read_all_subfolders", True)
+        )
         
         # ✅ 使用线程池运行扫描任务
         scanner_worker = FileScannerRunnable(
             source_files=self.source_files,
             excluded_subfolders=self.excluded_subfolders,
             file_service=self.file_service,
+            read_all_subfolders=read_all_subfolders,
             finished_callback=self.on_scanning_finished,
             error_callback=self.on_scanning_error,
             progress_callback=self.on_worker_log
@@ -2047,10 +2169,18 @@ class MainAppLogic(QObject):
         thread = threading.Thread(target=translation_worker.run, daemon=True)
         self.current_thread = thread
         thread.start()
-        
-        self._ui_log(f"翻译任务已启动 (任务ID: {task_id})")
+
+        cli_cfg = self.config_service.get_config().cli
+        if getattr(cli_cfg, 'import_yolo_only', False):
+            self._ui_log(f"YOLO标注导入任务已启动 (任务ID: {task_id})")
+            self.state_manager.set_status_message("正在导入YOLO标注...")
+        elif getattr(cli_cfg, 'ocr_only', False):
+            self._ui_log(f"OCR任务已启动 (任务ID: {task_id})")
+            self.state_manager.set_status_message("正在执行OCR...")
+        else:
+            self._ui_log(f"翻译任务已启动 (任务ID: {task_id})")
+            self.state_manager.set_status_message("正在翻译...")
         self.state_manager.set_translating(True)
-        self.state_manager.set_status_message("正在翻译...")
 
     def _resolve_input_files(self) -> List[str]:
         """
@@ -2136,8 +2266,17 @@ class MainAppLogic(QObject):
         saved_files = []
         # The `results` list will only contain items from a batch job now.
         # Sequential jobs handle saving in `on_file_completed`.
+        cli_cfg = self.config_service.get_config().cli
+        is_yolo_import_mode = getattr(cli_cfg, 'import_yolo_only', False)
+
         if results:
-            self._ui_log(f"批量翻译任务完成，收到 {len(results)} 个结果。正在保存...")
+            is_ocr_only_mode = getattr(cli_cfg, 'ocr_only', False)
+            if is_yolo_import_mode:
+                self._ui_log(f"YOLO标注导入完成，收到 {len(results)} 个结果。正在保存...")
+            elif is_ocr_only_mode:
+                self._ui_log(f"OCR任务完成，收到 {len(results)} 个结果。正在保存...")
+            else:
+                self._ui_log(f"批量翻译任务完成，收到 {len(results)} 个结果。正在保存...")
             try:
                 config = self.config_service.get_config()
                 output_format = config.cli.format
@@ -2150,6 +2289,8 @@ class MainAppLogic(QObject):
                 else:
                     for result in results:
                         if result.get('success'):
+                            if result.get('skipped'):
+                                continue
                             # 检查是否有 output_path（批量模式下后端已保存）
                             if result.get('output_path'):
                                 # 批量模式：直接使用后端保存的路径
@@ -2202,9 +2343,19 @@ class MainAppLogic(QObject):
 
         failed_count = len(self._task_failures)
         if failed_count > 0:
-            self._ui_log(f"翻译任务完成。成功处理 {self.saved_files_count} 个文件，失败 {failed_count} 个文件。", "WARNING")
+            if is_yolo_import_mode:
+                self._ui_log(f"YOLO标注导入完成。成功导入 {self.saved_files_count} 个文件，失败 {failed_count} 个文件。", "WARNING")
+            elif is_ocr_only_mode:
+                self._ui_log(f"OCR任务完成。成功处理 {self.saved_files_count} 个文件，失败 {failed_count} 个文件。", "WARNING")
+            else:
+                self._ui_log(f"翻译任务完成。成功处理 {self.saved_files_count} 个文件，失败 {failed_count} 个文件。", "WARNING")
         else:
-            self._ui_log(f"翻译任务完成。总共成功处理 {self.saved_files_count} 个文件。")
+            if is_yolo_import_mode:
+                self._ui_log(f"YOLO标注导入完成。总共成功导入 {self.saved_files_count} 个文件。")
+            elif is_ocr_only_mode:
+                self._ui_log(f"OCR任务完成。总共成功处理 {self.saved_files_count} 个文件。")
+            else:
+                self._ui_log(f"翻译任务完成。总共成功处理 {self.saved_files_count} 个文件。")
         
         # 对于顺序处理模式，使用累积的 saved_files_list
         if not saved_files and self.saved_files_list:
@@ -2213,9 +2364,17 @@ class MainAppLogic(QObject):
         try:
             self.state_manager.set_translating(False)
             if failed_count > 0:
-                self.state_manager.set_status_message(f"任务完成，成功处理 {self.saved_files_count} 个文件，失败 {failed_count} 个文件。")
+                if is_yolo_import_mode:
+                    self.state_manager.set_status_message(f"导入完成，成功导入 {self.saved_files_count} 个文件，失败 {failed_count} 个文件。")
+                elif is_ocr_only_mode:
+                    self.state_manager.set_status_message(f"OCR完成，成功处理 {self.saved_files_count} 个文件，失败 {failed_count} 个文件。")
+                else:
+                    self.state_manager.set_status_message(f"任务完成，成功处理 {self.saved_files_count} 个文件，失败 {failed_count} 个文件。")
             else:
-                self.state_manager.set_status_message(f"任务完成，成功处理 {self.saved_files_count} 个文件。")
+                if is_yolo_import_mode:
+                    self.state_manager.set_status_message(f"导入完成，成功导入 {self.saved_files_count} 个文件。")
+                else:
+                    self.state_manager.set_status_message(f"任务完成，成功处理 {self.saved_files_count} 个文件。")
             
             # 重置主视图的进度条
             if hasattr(self, 'main_view') and self.main_view:
@@ -2460,11 +2619,12 @@ class FileScannerWorker(QObject):
     error = pyqtSignal(str)
     progress = pyqtSignal(str)
 
-    def __init__(self, source_files, excluded_subfolders, file_service):
+    def __init__(self, source_files, excluded_subfolders, file_service, read_all_subfolders: bool = True):
         super().__init__()
         self.source_files = source_files
         self.excluded_subfolders = excluded_subfolders.copy()
         self.file_service = file_service
+        self.read_all_subfolders = bool(read_all_subfolders)
         self.file_to_folder_map = {}
         self.archive_to_temp_map = {}
 
@@ -2599,8 +2759,12 @@ class FileScannerWorker(QObject):
             for folder in folders:
                 self.progress.emit(f"正在扫描文件夹: {os.path.basename(folder)}")
                 # 获取文件夹中的所有图片
-                folder_files = self.file_service.get_image_files_from_folder(folder, recursive=True)
-                folder_archives = self.file_service.get_archive_files_from_folder(folder, recursive=True)
+                folder_files = self.file_service.get_image_files_from_folder(
+                    folder, recursive=True, read_all_subfolders=self.read_all_subfolders
+                )
+                folder_archives = self.file_service.get_archive_files_from_folder(
+                    folder, recursive=True, read_all_subfolders=self.read_all_subfolders
+                )
                  
                 # 过滤掉被排除的子文件夹中的文件
                 if self.excluded_subfolders:
@@ -2705,7 +2869,7 @@ class TranslationWorker(QObject):
 
     def _build_batch_failure_log_message(self, failed_items: list[dict], total_failed: int) -> str:
         lines = [
-            f"\n⚠️ 批量翻译完成：失败 {total_failed} 张"
+            f"\n批量翻译完成：失败 {total_failed} 张"
         ]
         for item in failed_items[:5]:
             lines.append(f"- {item['file_name']}: {item['summary']}")
@@ -2813,6 +2977,53 @@ class TranslationWorker(QObject):
         
         final_output_path = os.path.join(final_output_dir, output_filename)
         return final_output_path
+
+    def _resolve_saved_location_for_log(self, results: list, save_info: dict) -> str:
+        cli_cfg = self.config_dict.get('cli', {}) if isinstance(self.config_dict, dict) else {}
+        save_to_source_dir = bool(save_info.get('save_to_source_dir', False))
+
+        if save_to_source_dir:
+            if bool(cli_cfg.get('load_text_generate_mask_only', False)):
+                sub_parts = ('manga_translator_work', 'mask')
+            elif bool(cli_cfg.get('generate_and_export', False)):
+                sub_parts = ('manga_translator_work', 'translations')
+            elif bool(cli_cfg.get('template', False)) and bool(cli_cfg.get('save_text', False)):
+                sub_parts = ('manga_translator_work', 'originals')
+            elif bool(cli_cfg.get('export_editable_psd', False)):
+                sub_parts = ('manga_translator_work', 'psd')
+            else:
+                sub_parts = ('manga_translator_work', 'result')
+
+            base_dirs = []
+            for item in results or []:
+                if not isinstance(item, dict) or not item.get('success'):
+                    continue
+                original_path = item.get('original_path')
+                if isinstance(original_path, str) and original_path.strip():
+                    base_dirs.append(os.path.normpath(os.path.dirname(original_path)))
+
+            if not base_dirs:
+                return self.output_folder
+
+            concrete_dirs = sorted(set(os.path.join(d, *sub_parts) for d in base_dirs))
+            if len(concrete_dirs) == 1:
+                return concrete_dirs[0]
+            return f"多个目录（{len(concrete_dirs)} 个），示例：{concrete_dirs[0]}"
+
+        out_dirs = []
+        for item in results or []:
+            if not isinstance(item, dict) or not item.get('success'):
+                continue
+            output_path = item.get('output_path')
+            if isinstance(output_path, str) and output_path.strip():
+                out_dirs.append(os.path.normpath(os.path.dirname(output_path)))
+
+        if not out_dirs:
+            return self.output_folder
+        unique_out_dirs = sorted(set(out_dirs))
+        if len(unique_out_dirs) == 1:
+            return unique_out_dirs[0]
+        return f"多个目录（{len(unique_out_dirs)} 个），示例：{unique_out_dirs[0]}"
 
     def stop(self):
         self._log_info("--- Stop request received.")
@@ -3522,7 +3733,7 @@ class TranslationWorker(QObject):
                     # Update files list to only include those needing processing
                     self.files = files_to_process
                 else:
-                    self._log_info("--- ✅ 未发现已存在的文件，将处理所有文件")
+                    self._log_info("--- 未发现已存在的文件，将处理所有文件")
                     self.logger.info("未发现已存在的文件，将处理所有文件")
             
             # Update total count for progress bar logic
@@ -3539,12 +3750,24 @@ class TranslationWorker(QObject):
             elif cli_config.get('colorize_only', False):
                 workflow_mode = self._t("Colorize Only")
                 workflow_tip = self._t("Tip: Only colorize images, no detection, OCR, translation or rendering")
+            elif cli_config.get('import_yolo_only', False):
+                workflow_mode = self._t("Import YOLO Label Data")
+                workflow_tip = self._t("Tip: Import YOLO labels for all images first and save reusable detection boxes to JSON without running OCR")
+            elif cli_config.get('ocr_only', False):
+                workflow_mode = self._t("OCR Only")
+                workflow_tip = self._t("Tip: Load existing detection boxes from JSON and run OCR only, then export original text template")
             elif cli_config.get('generate_and_export', False):
                 workflow_mode = self._t("Export Translation")
                 workflow_tip = self._t("Tip: After exporting, check manga_translator_work/translations/ for imagename_translated.txt files")
             elif cli_config.get('template', False):
                 workflow_mode = self._t("Export Original Text")
                 workflow_tip = self._t("Tip: After exporting, manually translate imagename_original.txt in manga_translator_work/originals/, then use 'Import Translation and Render' mode")
+            elif cli_config.get('load_text_generate_mask_only', False):
+                workflow_mode = self._t("Import Translation and Generate Mask")
+                workflow_tip = self._t("Tip: Import translation JSON first and only generate/refine mask PNG files, without rendering output text")
+            elif cli_config.get('load_text_render_only', False):
+                workflow_mode = self._t("Render Only (Use Existing Mask)")
+                workflow_tip = self._t("Tip: Use existing mask PNG from JSON (mask_file) to inpaint and render. No automatic mask regeneration")
             elif cli_config.get('load_text', False):
                 workflow_mode = self._t("Import Translation and Render")
                 workflow_tip = self._t("Tip: Will read TXT files from manga_translator_work/originals/ or translations/ and render (prioritize _original.txt)")
@@ -3559,6 +3782,8 @@ class TranslationWorker(QObject):
             
             # 检查是否有不兼容并行的特殊模式
             load_text = self.config_dict.get('cli', {}).get('load_text', False)
+            load_text_generate_mask_only = self.config_dict.get('cli', {}).get('load_text_generate_mask_only', False)
+            load_text_render_only = self.config_dict.get('cli', {}).get('load_text_render_only', False)
             translate_json_only = self.config_dict.get('cli', {}).get('translate_json_only', False)
             template = self.config_dict.get('cli', {}).get('template', False)
             save_text = self.config_dict.get('cli', {}).get('save_text', False)
@@ -3567,17 +3792,23 @@ class TranslationWorker(QObject):
             upscale_only = self.config_dict.get('cli', {}).get('upscale_only', False)
             inpaint_only = self.config_dict.get('cli', {}).get('inpaint_only', False)
             replace_translation = self.config_dict.get('cli', {}).get('replace_translation', False)
+            import_yolo_only = self.config_dict.get('cli', {}).get('import_yolo_only', False)
+            ocr_only = self.config_dict.get('cli', {}).get('ocr_only', False)
             
             is_template_save_mode = template and save_text
             has_incompatible_mode = (
                 load_text or 
+                load_text_generate_mask_only or
+                load_text_render_only or
                 translate_json_only or
                 is_template_save_mode or 
                 generate_and_export or 
                 colorize_only or 
                 upscale_only or 
                 inpaint_only or
-                replace_translation
+                replace_translation or
+                import_yolo_only or
+                ocr_only
             )
             
             # 如果有不兼容模式，强制禁用并行
@@ -3599,8 +3830,12 @@ class TranslationWorker(QObject):
                     incompatible_modes.append("仅修复")
                 if replace_translation:
                     incompatible_modes.append("替换翻译")
+                if import_yolo_only:
+                    incompatible_modes.append("导入YOLO标注数据")
+                if ocr_only:
+                    incompatible_modes.append("仅OCR")
                 
-                self._log_warning(f"⚠️  并发流水线已禁用：当前模式 [{', '.join(incompatible_modes)}] 不支持并发处理")
+                self._log_warning(f"并发流水线已禁用：当前模式 [{', '.join(incompatible_modes)}] 不支持并发处理")
                 batch_concurrent = False
 
             progress_context["offset"] = skipped_count
@@ -3617,12 +3852,12 @@ class TranslationWorker(QObject):
                 # 如果启用并发模式，不分批加载（并发流水线内部会按需加载）
                 if batch_concurrent:
                     progress_context["detail"] = "并发处理中"
-                    self._log_info(self._t("📊 Concurrent pipeline mode: {total} images (Total: {orig})", total=total_images, orig=total_original_count))
-                    self._log_info(self._t("🔧 Translation workflow: {mode}", mode=workflow_mode))
-                    self._log_info(self._t("📁 Output directory: {dir}", dir=self.output_folder))
+                    self._log_info(f"并发流水线模式：{total_images} 张图片（总计：{total_original_count}）")
+                    self._log_info(self._t("翻译流程：{mode}", mode=workflow_mode))
+                    self._log_info(f"输出目录：{self.output_folder}")
                     if workflow_tip:
                         self._log_info(workflow_tip)
-                    self._log_info(self._t("🚀 Starting translation..."))
+                    self._log_info("开始执行任务...")
                     
                     # 初始化进度条 (start from skipped_count)
                     emit_eta_progress(skipped_count, total_original_count, "并发处理中")
@@ -3651,18 +3886,21 @@ class TranslationWorker(QObject):
                     
                     # 显示批量处理信息
                     if skipped_count > 0:
-                        self._log_info(self._t("📊 Batch processing mode: {total} images in {batches} batches", total=total_images, batches=backend_total_batches))
+                        self._log_info(f"批量处理模式：共 {total_images} 张图片，分 {backend_total_batches} 个批次处理")
                         self._log_info(f"--- ℹ️ 另有 {skipped_count} 个文件已跳过（原始总数：{total_original_count}）")
                     else:
-                        self._log_info(self._t("📊 Batch processing mode: {total} images in {batches} batches", total=total_images, batches=backend_total_batches))
-                    
-                    self._log_info(self._t("🔧 Translation workflow: {mode}", mode=workflow_mode))
-                    self._log_info(self._t("📁 Output directory: {dir}", dir=self.output_folder))
+                        self._log_info(f"批量处理模式：共 {total_images} 张图片，分 {backend_total_batches} 个批次处理")
+
+                    if import_yolo_only or ocr_only:
+                        self._log_info(f"执行：{workflow_mode}")
+                    else:
+                        self._log_info(self._t("翻译流程：{mode}", mode=workflow_mode))
+                    self._log_info(f"输出目录：{self.output_folder}")
                     if workflow_tip:
                         self._log_info(workflow_tip)
 
                     # 交给后端按 batch_size 懒加载并处理
-                    self._log_info(self._t("🚀 Starting translation..."))
+                    self._log_info("开始执行任务...")
                     
                     # 初始化进度条
                     emit_eta_progress(skipped_count, total_original_count, "批量处理中")
@@ -3687,11 +3925,36 @@ class TranslationWorker(QObject):
                 success_count = 0
                 failed_count = 0
                 failed_items = []
+                yolo_label_total = 0
+                yolo_imported_files = 0
+                yolo_empty_txt_files = 0
                 for ctx in contexts:
                     if not self._is_running: raise asyncio.CancelledError("Task stopped by user.")
                     if ctx:
+                        if import_yolo_only:
+                            yolo_found = bool(self._get_context_value(ctx, 'yolo_label_file_found', False))
+                            yolo_empty = bool(self._get_context_value(ctx, 'yolo_label_file_empty', False))
+                            yolo_boxes = int(self._get_context_value(ctx, 'yolo_imported_box_count', 0) or 0)
+                            if yolo_found:
+                                yolo_label_total += 1
+                                if yolo_empty:
+                                    yolo_empty_txt_files += 1
+                                if yolo_boxes > 0:
+                                    yolo_imported_files += 1
+
                         image_name = self._get_context_value(ctx, 'image_name', 'Unknown') or 'Unknown'
                         file_name = os.path.basename(image_name)
+                        if self._get_context_value(ctx, 'skipped', False):
+                            skip_reason = self._get_context_value(ctx, 'skip_reason', '')
+                            results.append({
+                                'success': True,
+                                'original_path': image_name,
+                                'image_data': None,
+                                'skipped': True,
+                                'skip_reason': skip_reason,
+                            })
+                            self._log_info(f"图片 {file_name} 已跳过")
+                            continue
                         # 检查是否有翻译错误
                         error_message = self._extract_context_error_message(ctx)
                         error_summary = self._normalize_error_summary(error_message)
@@ -3699,7 +3962,7 @@ class TranslationWorker(QObject):
                             results.append({'success': False, 'original_path': image_name, 'error': error_message})
                             failed_count += 1
                             failed_items.append({'file_name': file_name, 'summary': error_summary})
-                            self._log_warning(f"\n⚠️ 图片 {file_name} 翻译失败：{error_summary}")
+                            self._log_warning(f"\n图片 {file_name} 处理失败：{error_summary}")
                             self._log_error(error_message)
                         elif self._get_context_value(ctx, 'success'):
                             # 优先检查success标志（因为result可能被清理了）
@@ -3716,13 +3979,13 @@ class TranslationWorker(QObject):
                             results.append({'success': False, 'original_path': image_name, 'error': fallback_error})
                             failed_count += 1
                             failed_items.append({'file_name': file_name, 'summary': fallback_error})
-                            self._log_warning(f"\n⚠️ 图片 {file_name} 翻译失败：{fallback_error}")
+                            self._log_warning(f"\n图片 {file_name} 处理失败：{fallback_error}")
                     else:
                         fallback_error = 'Batch translation returned no context'
                         results.append({'success': False, 'original_path': 'Unknown', 'error': fallback_error})
                         failed_count += 1
                         failed_items.append({'file_name': 'Unknown', 'summary': fallback_error})
-                        self._log_warning(f"\n⚠️ 图片 Unknown 翻译失败：{fallback_error}")
+                        self._log_warning(f"\n图片 Unknown 处理失败：{fallback_error}")
 
                 if failed_count > 0:
                     self._log_warning(
@@ -3731,17 +3994,33 @@ class TranslationWorker(QObject):
                             total_failed=failed_count,
                         )
                     )
-                    self._log_warning(
-                        self._t(
-                            "\n⚠️ Batch translation completed: {success}/{total} succeeded, {failed}/{total} failed",
-                            success=success_count,
-                            total=total_images,
-                            failed=failed_count,
+                    if import_yolo_only:
+                        self._log_warning(f"\nYOLO标签导入完成：成功导入 {success_count}/{total_images}，失败 {failed_count}/{total_images}")
+                    elif ocr_only:
+                        self._log_warning(f"\nOCR任务完成：成功处理 {success_count}/{total_images}，失败 {failed_count}/{total_images}")
+                    else:
+                        self._log_warning(
+                            f"\n批量翻译完成：成功 {success_count}/{total_images} 张，失败 {failed_count}/{total_images} 张"
                         )
-                    )
                 else:
-                    self._log_info(self._t("✅ Batch translation completed: {success}/{total} succeeded", success=success_count, total=total_images))
-                self._log_info(self._t("💾 Files saved to: {dir}", dir=self.output_folder))
+                    if import_yolo_only:
+                        self._log_info(f"YOLO标签导入成功：成功导入 {success_count}/{total_images} 个标注文件")
+                        self._log_info(
+                            f"导入YOLO标注完成：共 {yolo_label_total} 个标注文件，"
+                            f"导入 {yolo_imported_files} 个标注文件，空TXT {yolo_empty_txt_files} 个文件"
+                        )
+                    elif ocr_only:
+                        self._log_info(f"OCR任务完成：成功处理 {success_count}/{total_images} 张")
+                    else:
+                        self._log_info(f"批量翻译完成：成功 {success_count}/{total_images} 张")
+
+                saved_location = self._resolve_saved_location_for_log(results, save_info)
+                if import_yolo_only:
+                    self._log_info(f"导入结果已保存到：{saved_location}")
+                elif ocr_only:
+                    self._log_info(f"OCR结果已保存到：{saved_location}")
+                else:
+                    self._log_info(f"文件已保存到：{saved_location}")
 
             else:
                 progress_context["detail"] = "顺序处理中"
@@ -3750,9 +4029,12 @@ class TranslationWorker(QObject):
                 total_files = len(self.files)
 
                 # 输出顺序处理信息
-                self._log_info(self._t("📊 Sequential processing mode: {total} images (Total: {orig})", total=total_files, orig=total_original_count))
-                self._log_info(self._t("🔧 Translation workflow: {mode}", mode=workflow_mode))
-                self._log_info(self._t("📁 Output directory: {dir}", dir=self.output_folder))
+                self._log_info(f"顺序处理模式：{total_files} 张图片（总计：{total_original_count}）")
+                if import_yolo_only or ocr_only:
+                    self._log_info(f"执行：{workflow_mode}")
+                else:
+                    self._log_info(self._t("翻译流程：{mode}", mode=workflow_mode))
+                self._log_info(f"输出目录：{self.output_folder}")
                 if workflow_tip:
                     self._log_info(workflow_tip)
 
@@ -3767,7 +4049,7 @@ class TranslationWorker(QObject):
                         raise asyncio.CancelledError("Task stopped by user.")
 
                     current_num = skipped_count + i + 1
-                    self._log_info(f"🔄 [{current_num}/{total_original_count}] 正在处理：{os.path.basename(file_path)}")
+                    self._log_info(f"[{current_num}/{total_original_count}] 正在处理：{os.path.basename(file_path)}")
 
                     try:
                         # 使用二进制模式读取以避免Windows路径编码问题
@@ -3777,6 +4059,18 @@ class TranslationWorker(QObject):
 
                         ctx = await translator.translate(image, config, image_name=image.name, save_info=save_info)
                         
+                        if ctx and getattr(ctx, 'skipped', False):
+                            self.file_processed.emit({
+                                'success': True,
+                                'original_path': file_path,
+                                'image_data': None,
+                                'skipped': True,
+                                'skip_reason': getattr(ctx, 'skip_reason', ''),
+                            })
+                            self._log_info(f"[{current_num}/{total_files}] 已跳过：{os.path.basename(file_path)}")
+                            emit_eta_progress(current_num, total_original_count, f"已跳过: {os.path.basename(file_path)}")
+                            continue
+
                         # 检查翻译是否成功（批量模式下 ctx.result 可能为 None，但文件已由后端保存）
                         if ctx and ctx.success:
                             # 计算后端保存的文件路径
@@ -3788,25 +4082,30 @@ class TranslationWorker(QObject):
                                 'output_path': output_path  # 后端保存的路径
                             })
                             success_count += 1
-                            self._log_info(f"✅ [{current_num}/{total_files}] 完成：{os.path.basename(file_path)}")
+                            self._log_info(f"[{current_num}/{total_files}] 完成：{os.path.basename(file_path)}")
                             emit_eta_progress(current_num, total_original_count, f"刚完成: {os.path.basename(file_path)}")
                         else:
                             error_msg = getattr(ctx, 'translation_error', 'Translation returned no result') if ctx else 'Translation failed'
                             progress_context["failed_count"] += 1
                             self.file_processed.emit({'success': False, 'original_path': file_path, 'error': error_msg})
-                            self._log_warning(f"❌ [{current_num}/{total_files}] 失败：{os.path.basename(file_path)}")
+                            self._log_warning(f"[{current_num}/{total_files}] 失败：{os.path.basename(file_path)}")
                             emit_eta_progress(current_num, total_original_count, f"处理失败: {os.path.basename(file_path)}")
 
                     except Exception as e:
-                        self._log_error(f"❌ [{current_num}/{total_files}] 错误：{os.path.basename(file_path)} - {e}")
+                        self._log_error(f"[{current_num}/{total_files}] 错误：{os.path.basename(file_path)} - {e}")
                         progress_context["failed_count"] += 1
                         self.file_processed.emit({'success': False, 'original_path': file_path, 'error': str(e)})
                         emit_eta_progress(current_num, total_original_count, f"处理失败: {os.path.basename(file_path)}")
                         # 抛出异常，终止整个翻译流程
                         raise
 
-                self._log_info(f"✅ 顺序翻译完成：成功 {success_count}/{total_files} 张")
-                self._log_info(f"💾 文件已保存到：{self.output_folder}")
+                if import_yolo_only:
+                    self._log_info(f"顺序导入完成：成功 {success_count}/{total_files} 个文件")
+                elif ocr_only:
+                    self._log_info(f"顺序OCR完成：成功 {success_count}/{total_files} 张")
+                else:
+                    self._log_info(f"顺序翻译完成：成功 {success_count}/{total_files} 张")
+                self._log_info(f"文件已保存到：{self._resolve_saved_location_for_log(results, save_info)}")
             
             self.finished.emit(results)
 
@@ -3944,12 +4243,13 @@ class WorkerSignals(QObject):
 class FileScannerRunnable(QRunnable):
     """文件扫描任务（线程池版本）"""
     
-    def __init__(self, source_files, excluded_subfolders, file_service, 
+    def __init__(self, source_files, excluded_subfolders, file_service, read_all_subfolders,
                  finished_callback, error_callback, progress_callback):
         super().__init__()
         self.source_files = source_files
         self.excluded_subfolders = excluded_subfolders.copy()
         self.file_service = file_service
+        self.read_all_subfolders = bool(read_all_subfolders)
         self.finished_callback = finished_callback
         self.error_callback = error_callback
         self.progress_callback = progress_callback
@@ -4097,8 +4397,12 @@ class FileScannerRunnable(QRunnable):
             # 按文件夹分组处理
             for folder in folders:
                 self._emit_progress(f"正在扫描文件夹: {os.path.basename(folder)}")
-                folder_files = self.file_service.get_image_files_from_folder(folder, recursive=True)
-                folder_archives = self.file_service.get_archive_files_from_folder(folder, recursive=True)
+                folder_files = self.file_service.get_image_files_from_folder(
+                    folder, recursive=True, read_all_subfolders=self.read_all_subfolders
+                )
+                folder_archives = self.file_service.get_archive_files_from_folder(
+                    folder, recursive=True, read_all_subfolders=self.read_all_subfolders
+                )
                  
                 # 过滤掉被排除的子文件夹中的文件
                 if self.excluded_subfolders:
@@ -4281,4 +4585,3 @@ class TranslationRunnable(QRunnable):
     def _emit_file_processed(self, data):
         """线程安全地发送文件处理完成信号"""
         self.signals.file_processed.emit(data)
-

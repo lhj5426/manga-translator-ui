@@ -490,6 +490,15 @@ class MainWindow(QMainWindow):
     def _should_prompt_open_results_in_editor(self) -> bool:
         """Only prompt for workflows that produce editor-meaningful results."""
         try:
+            # Prefer current workflow selection from UI to avoid stale config state after task completion.
+            main_view = getattr(self, 'main_view', None)
+            workflow_combo = getattr(main_view, 'workflow_mode_combo', None) if main_view is not None else None
+            if workflow_combo is not None:
+                current_index = workflow_combo.currentIndex()
+                # 5: 导入翻译并生成掩膜, 6: 仅渲染（使用已有掩膜）
+                if current_index in (5, 6):
+                    return False
+
             config = self.config_service.get_config()
             cli = getattr(config, 'cli', None)
             if cli is None:
@@ -502,9 +511,13 @@ class MainWindow(QMainWindow):
                 return True
 
             incompatible_modes = (
+                getattr(cli, 'load_text_generate_mask_only', False),
+                getattr(cli, 'load_text_render_only', False),
                 getattr(cli, 'translate_json_only', False),
                 getattr(cli, 'template', False),
                 getattr(cli, 'generate_and_export', False),
+                getattr(cli, 'import_yolo_only', False),
+                getattr(cli, 'ocr_only', False),
                 getattr(cli, 'colorize_only', False),
                 getattr(cli, 'upscale_only', False),
                 getattr(cli, 'inpaint_only', False),
@@ -548,14 +561,15 @@ class MainWindow(QMainWindow):
             tree_structure = self.app_logic.get_folder_tree_structure()
             expanded_files = tree_structure['files']
             folder_tree = tree_structure['tree']
+            target_file = None
 
             # 判断是否从翻译完成进入（有 files_to_load 参数）
             if files_to_load and len(files_to_load) > 0:
+                target_file = files_to_load[0]
                 self.editor_logic.load_file_lists(
                     source_files=expanded_files,
                     folder_tree=folder_tree,
                 )
-                self.editor_logic.load_image_into_editor(files_to_load[0])
             else:
                 # 手动打开编辑器：显示源文件列表
                 self.editor_logic.load_file_lists(
@@ -564,11 +578,17 @@ class MainWindow(QMainWindow):
                 )
                 # 如果指定了要加载的文件
                 if file_to_load:
-                    self.editor_logic.load_image_into_editor(file_to_load)
+                    target_file = file_to_load
                 elif expanded_files:
-                    self.editor_logic.load_image_into_editor(expanded_files[0])
+                    target_file = expanded_files[0]
 
             self.stacked_widget.setCurrentWidget(self.editor_view)
+
+            if target_file:
+                if hasattr(self.editor_view, 'file_list'):
+                    self.editor_view.file_list.select_file(target_file, emit_signal=False)
+                self.editor_logic.load_image_into_editor(target_file)
+
         except Exception as e:
             self.logger.error(f"enter_editor_mode 发生异常: {e}", exc_info=True)
             import traceback

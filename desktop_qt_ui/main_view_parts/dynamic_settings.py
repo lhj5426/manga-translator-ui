@@ -266,6 +266,45 @@ def _add_settings_divider(self, parent_layout, title: str, is_sub: bool = False)
     parent_layout.addRow(row)
 
 
+def _resolve_mask_output_mode_value(widget: QComboBox) -> str:
+    text = widget.currentText().strip()
+    display_map = widget.property("mask_display_map") or {}
+    if isinstance(display_map, dict):
+        reverse_map = {str(v): str(k) for k, v in display_map.items()}
+        return reverse_map.get(text, text)
+    return text
+
+
+def _refresh_mask_region_color_enabled(self, mode_value: str | None = None):
+    color_widget = getattr(self, "_mask_region_color_widget", None)
+    if color_widget is None:
+        return
+
+    if mode_value is None:
+        mode_widget = getattr(self, "_mask_output_mode_widget", None)
+        if mode_widget is not None:
+            mode_value = _resolve_mask_output_mode_value(mode_widget)
+        else:
+            try:
+                mode_value = str(self.config_service.get_config().cli.mask_output_mode or "black")
+            except Exception:
+                mode_value = "black"
+
+    enabled = str(mode_value).strip().lower() == "transparent"
+    color_widget.setEnabled(enabled)
+    if hasattr(color_widget, "setReadOnly"):
+        color_widget.setReadOnly(not enabled)
+
+
+def _on_mask_output_mode_changed(self, text: str, full_key: str, display_map: dict | None = None):
+    raw_value = text
+    if display_map:
+        reverse_map = {str(v): str(k) for k, v in display_map.items()}
+        raw_value = reverse_map.get(text, text)
+    self._on_setting_changed(raw_value, full_key, None)
+    _refresh_mask_region_color_enabled(self, raw_value)
+
+
 def _create_widget_from_full_key(self, config: dict, full_key: str, parent_layout):
     if full_key in {
         "ocr.ai_ocr_prompt_path",
@@ -752,6 +791,34 @@ def _create_param_widgets(self, data, parent_layout, prefix=""):
             self.language_combo = widget
             widget.currentIndexChanged.connect(self._on_language_combo_changed)
             self._populate_language_combo()
+
+        elif full_key == "cli.mask_output_mode":
+            widget = QComboBox()
+            widget.setMinimumWidth(180)
+            self._mask_output_mode_widget = widget
+            if display_map:
+                widget.addItems(list(display_map.values()))
+                current_display_name = display_map.get(value) if value is not None else None
+                if current_display_name:
+                    widget.setCurrentText(current_display_name)
+                widget.setProperty("mask_display_map", display_map)
+                widget.currentTextChanged.connect(
+                    lambda text, k=full_key, dm=display_map: _on_mask_output_mode_changed(self, text, k, dm)
+                )
+            else:
+                if options:
+                    widget.addItems(options)
+                if value is not None:
+                    widget.setCurrentText(str(value))
+                widget.currentTextChanged.connect(
+                    lambda text, k=full_key: _on_mask_output_mode_changed(self, text, k, None)
+                )
+
+        elif full_key == "cli.mask_region_color":
+            widget = QLineEdit(str(value) if value else "#FFFFFF")
+            self._mask_region_color_widget = widget
+            widget.editingFinished.connect(lambda k=full_key, w=widget: self._on_setting_changed(w.text(), k, None))
+            _refresh_mask_region_color_enabled(self)
 
         elif full_key == "filter_text_enabled":
             # 特殊处理：过滤列表开关 + 编辑过滤列表按钮

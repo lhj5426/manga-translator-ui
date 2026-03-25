@@ -1044,10 +1044,16 @@ class GraphicsView(QGraphicsView):
                         break
                     check_item = check_item.parentItem()
 
-            # 如果点击在空白区域（没有 item 或只有图片），开始框选
+            # 如果点击在空白区域（没有 item 或只有图片），按下 Alt 键时框选，否则拖拽画布
             if item_at_pos is None or item_at_pos == self._image_item:
-                self.selection_manager.start_box_select(self.mapToScene(event.pos()))
-                event.accept()
+                alt_pressed = bool(event.modifiers() & Qt.KeyboardModifier.AltModifier)
+                if alt_pressed:
+                    self.selection_manager.start_box_select(self.mapToScene(event.pos()))
+                    event.accept()
+                else:
+                    self.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
+                    # 直接传递原始事件即可，因为当前已经是左键按下了
+                    super().mousePressEvent(event)
                 return
 
             # 如果点击在 RegionTextItem 上，让 item 处理事件
@@ -1057,8 +1063,8 @@ class GraphicsView(QGraphicsView):
             else:
                 super().mousePressEvent(event)
                 # 空白区域点击：手动清除选择（Qt不一定自动清除item选择）
-                ctrl_pressed = bool(event.modifiers() & Qt.KeyboardModifier.ControlModifier)
-                if not ctrl_pressed:
+                alt_pressed = bool(event.modifiers() & Qt.KeyboardModifier.AltModifier)
+                if not alt_pressed:
                     # 清除所有 Qt item 选择，scene.selectionChanged 会自动同步到 model
                     self.scene.clearSelection()
         else:
@@ -1088,8 +1094,8 @@ class GraphicsView(QGraphicsView):
         """处理鼠标释放事件"""
         # 处理框选完成
         if self.selection_manager.is_box_selecting and event.button() == Qt.MouseButton.LeftButton:
-            ctrl_pressed = bool(event.modifiers() & Qt.KeyboardModifier.ControlModifier)
-            self.selection_manager.finish_box_select(ctrl_pressed)
+            alt_pressed = bool(event.modifiers() & Qt.KeyboardModifier.AltModifier)
+            self.selection_manager.finish_box_select(alt_pressed)
             event.accept()
             return
 

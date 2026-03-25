@@ -238,6 +238,8 @@ async def translate_files(input_paths, output_dir, config_service, verbose=False
     upscale_only = cli_config.get('upscale_only', False)
     inpaint_only = cli_config.get('inpaint_only', False)
     replace_translation = cli_config.get('replace_translation', False)
+    import_yolo_only = cli_config.get('import_yolo_only', False)
+    ocr_only = cli_config.get('ocr_only', False)
     
     is_template_save_mode = template and save_text
     has_incompatible_mode = (
@@ -247,7 +249,9 @@ async def translate_files(input_paths, output_dir, config_service, verbose=False
         colorize_only or 
         upscale_only or 
         inpaint_only or
-        replace_translation
+        replace_translation or
+        import_yolo_only or
+        ocr_only
     )
     
     # 如果有不兼容模式，强制禁用并行
@@ -267,6 +271,10 @@ async def translate_files(input_paths, output_dir, config_service, verbose=False
             incompatible_modes.append("仅修复")
         if replace_translation:
             incompatible_modes.append("替换翻译")
+        if import_yolo_only:
+            incompatible_modes.append("导入YOLO标注数据")
+        if ocr_only:
+            incompatible_modes.append("仅OCR")
         
         print(f"⚠️  并发流水线已禁用：当前模式 [{', '.join(incompatible_modes)}] 不支持并发处理")
         cli_config['batch_concurrent'] = False
@@ -826,4 +834,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

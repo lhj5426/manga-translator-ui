@@ -76,6 +76,10 @@ class FileService:
                 image_data = data[image_key]
 
             regions = image_data.get('regions', [])
+            if (not regions) and isinstance(image_data.get('textlines'), list):
+                regions = self._build_regions_from_textlines(image_data.get('textlines', []))
+                if regions:
+                    self.logger.info(f"regions 为空，已从 textlines 转换 {len(regions)} 个可视化检测框")
             
             # 检查是否有超分倍率，如果有则总是缩小坐标和字体大小
             upscale_ratio = image_data.get('upscale_ratio', 0)
@@ -190,6 +194,58 @@ class FileService:
             return [], None, None
 
         return regions, raw_mask, original_size
+
+    def _build_regions_from_textlines(self, textlines: List[dict]) -> List[dict]:
+        """当 JSON 中没有 regions 时，将 textlines 转为编辑器可显示的基础 regions。"""
+        regions: List[dict] = []
+        for item in textlines:
+            if not isinstance(item, dict):
+                continue
+            pts = item.get('pts')
+            if not isinstance(pts, list) or len(pts) != 4:
+                continue
+
+            polygon = []
+            valid = True
+            for p in pts:
+                if not isinstance(p, (list, tuple)) or len(p) < 2:
+                    valid = False
+                    break
+                try:
+                    x = float(p[0])
+                    y = float(p[1])
+                except (TypeError, ValueError):
+                    valid = False
+                    break
+                polygon.append([x, y])
+
+            if not valid or len(polygon) != 4:
+                continue
+
+            center_x = sum(pt[0] for pt in polygon) / 4.0
+            center_y = sum(pt[1] for pt in polygon) / 4.0
+            fg_colors = item.get('fg_colors') if isinstance(item.get('fg_colors'), list) else [0, 0, 0]
+            bg_colors = item.get('bg_colors') if isinstance(item.get('bg_colors'), list) else [255, 255, 255]
+            fg_colors = (fg_colors[:3] + [0, 0, 0])[:3]
+            bg_colors = (bg_colors[:3] + [255, 255, 255])[:3]
+            direction = item.get('direction') if item.get('direction') in ('h', 'v') else 'auto'
+
+            region = {
+                'text': str(item.get('text', '') or ''),
+                'translation': '',
+                'polygons': [polygon],
+                'lines': [polygon],
+                'angle': 0,
+                'center': [center_x, center_y],
+                'font_size': 20,
+                'font_color': [int(fg_colors[0]), int(fg_colors[1]), int(fg_colors[2])],
+                'bg_colors': [int(bg_colors[0]), int(bg_colors[1]), int(bg_colors[2])],
+                'direction': direction,
+                'alignment': 'center',
+                '_detection_only': True,
+            }
+            regions.append(region)
+        return regions
         
     def validate_image_file(self, file_path: str) -> bool:
         """验证是否为有效的图片文件或压缩包文件"""
@@ -269,8 +325,18 @@ class FileService:
         
         return parts
     
-    def get_image_files_from_folder(self, folder_path: str, recursive: bool = True) -> List[str]:
-        """从文件夹获取所有图片文件（默认递归查找所有子文件夹），忽略manga_translator_work目录"""
+    @staticmethod
+    def _apply_subfolder_scan_policy(dirs: List[str], read_all_subfolders: bool):
+        # Always skip software work folder from input file scanning.
+        dirs[:] = [d for d in dirs if d.lower() != "manga_translator_work"]
+        # When disabled, do not recurse into any subfolder.
+        if not read_all_subfolders:
+            dirs[:] = []
+
+    def get_image_files_from_folder(
+        self, folder_path: str, recursive: bool = True, read_all_subfolders: bool = True
+    ) -> List[str]:
+        """从文件夹获取所有图片文件。递归时支持子目录扫描策略控制。"""
         image_files = []
 
         try:
@@ -280,9 +346,7 @@ class FileService:
             if recursive:
                 # 递归搜索，按子文件夹分组排序
                 for root, dirs, files in os.walk(folder_path):
-                    # 移除manga_translator_work目录，避免遍历
-                    if 'manga_translator_work' in dirs:
-                        dirs.remove('manga_translator_work')
+                    self._apply_subfolder_scan_policy(dirs, read_all_subfolders)
                     
                     # 对dirs进行自然排序，确保os.walk按正确顺序遍历
                     dirs.sort(key=self._natural_sort_key)
@@ -299,7 +363,7 @@ class FileService:
                     current_files.sort(key=self._natural_sort_key)
                     image_files.extend(current_files)
             else:
-                # 只搜索当前目录，忽略manga_translator_work目录
+                # 只搜索当前目录
                 for file in os.listdir(folder_path):
                     file_path = os.path.join(folder_path, file)
                     ext = os.path.splitext(file)[1].lower()
@@ -314,8 +378,10 @@ class FileService:
             
         return image_files
 
-    def get_archive_files_from_folder(self, folder_path: str, recursive: bool = True) -> List[str]:
-        """从文件夹获取所有压缩包/文档文件（默认递归查找所有子文件夹），忽略manga_translator_work目录"""
+    def get_archive_files_from_folder(
+        self, folder_path: str, recursive: bool = True, read_all_subfolders: bool = True
+    ) -> List[str]:
+        """从文件夹获取所有压缩包/文档文件。递归时支持子目录扫描策略控制。"""
         archive_files = []
 
         try:
@@ -324,8 +390,7 @@ class FileService:
 
             if recursive:
                 for root, dirs, files in os.walk(folder_path):
-                    if 'manga_translator_work' in dirs:
-                        dirs.remove('manga_translator_work')
+                    self._apply_subfolder_scan_policy(dirs, read_all_subfolders)
                     dirs.sort(key=self._natural_sort_key)
 
                     current_files = []

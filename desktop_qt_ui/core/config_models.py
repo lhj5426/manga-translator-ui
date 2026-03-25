@@ -123,8 +123,14 @@ class CliSettings(BaseModel):
     skip_no_text: bool = False
     save_text: bool = True
     load_text: bool = False
+    load_text_generate_mask_only: bool = False
+    mask_output_mode: str = "black"  # 掩膜输出模式：black(黑底白区) / transparent(透明底彩色区)
+    mask_region_color: str = "#FFFFFF"  # transparent 模式下的区域颜色（HEX）
+    load_text_render_only: bool = False
     translate_json_only: bool = False
     template: bool = False
+    import_yolo_only: bool = False
+    ocr_only: bool = False
     save_quality: int = 100
     batch_size: int = 1
     batch_concurrent: bool = False
@@ -164,6 +170,7 @@ class AppSection(BaseModel):
     theme: str = "light"  # 主题选项由 theme_registry.py 统一定义
     theme_user_preference: str = "light"
     ui_language: str = "auto"  # UI语言：auto(自动检测), zh_CN, en_US, ja_JP, ko_KR 等
+    read_all_subfolders: bool = True  # 是否读取所有子文件夹；关闭时仅读取 manga_translator_work 子目录
     current_preset: str = "默认"  # 当前使用的预设名称
     unload_models_after_translation: bool = False  # 翻译完成后卸载模型（释放内存更彻底，但下次使用需要重新加载）
     saved_colors: Optional[List[str]] = None  # 保存的常用颜色列表

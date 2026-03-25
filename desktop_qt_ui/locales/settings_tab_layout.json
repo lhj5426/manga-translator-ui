@@ -10,6 +10,7 @@
       "items": [
         "app.ui_language",
         "app.theme",
+        "app.read_all_subfolders",
         "cli.verbose",
         "cli.ignore_errors",
         "cli.use_gpu",
@@ -159,6 +160,12 @@
         },
         "render.enable_template_alignment",
         "render.paste_mask_dilation_pixels",
+        {
+          "kind": "divider",
+          "title": "Mask"
+        },
+        "cli.mask_output_mode",
+        "cli.mask_region_color",
         {
           "kind": "divider",
           "title": "Upscaling"

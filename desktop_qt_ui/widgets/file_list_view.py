@@ -263,8 +263,9 @@ class FileListView(QTreeWidget):
         self.model = model
         
         # 导入i18n
-        from services import get_i18n_manager
+        from services import get_config_service, get_i18n_manager
         self.i18n = get_i18n_manager()
+        self.config_service = get_config_service()
         
         # 设置树形控件属性
         self.setHeaderHidden(True)  # 隐藏标题栏
@@ -289,6 +290,17 @@ class FileListView(QTreeWidget):
         if self.i18n:
             return self.i18n.translate(key, **kwargs)
         return key
+
+    def _read_all_subfolders_enabled(self) -> bool:
+        try:
+            return bool(getattr(self.config_service.get_config().app, "read_all_subfolders", True))
+        except Exception:
+            return True
+
+    def _should_scan_subfolder_name(self, folder_name: str) -> bool:
+        if folder_name.lower() == "manga_translator_work":
+            return False
+        return self._read_all_subfolders_enabled()
     
     def refresh_ui_texts(self):
         """刷新UI文本（用于语言切换）"""
@@ -332,6 +344,38 @@ class FileListView(QTreeWidget):
         # 只有当选中的是文件（不是文件夹节点）时才发出信号
         if file_path and not os.path.isdir(file_path):
             self.file_selected.emit(file_path)
+
+    def select_file(self, file_path: str, emit_signal: bool = False) -> bool:
+        """按路径选中文件项，可选是否发出 file_selected。"""
+        if not file_path:
+            return False
+
+        target_path = os.path.normpath(file_path)
+        previous_block = self.blockSignals(True)
+        try:
+            from PyQt6.QtWidgets import QTreeWidgetItemIterator
+
+            iterator = QTreeWidgetItemIterator(self)
+            while iterator.value():
+                item = iterator.value()
+                item_path = item.data(0, Qt.ItemDataRole.UserRole)
+                if item_path and os.path.normpath(item_path) == target_path:
+                    parent = item.parent()
+                    while parent:
+                        parent.setExpanded(True)
+                        parent = parent.parent()
+                    self.setCurrentItem(item)
+                    self.scrollToItem(item)
+                    break
+                iterator += 1
+            else:
+                return False
+        finally:
+            self.blockSignals(previous_block)
+
+        if emit_signal:
+            self.file_selected.emit(target_path)
+        return True
 
     def add_files(self, file_paths: List[str]):
         """添加多个文件/文件夹到列表（异步处理大文件夹）"""
@@ -379,11 +423,10 @@ class FileListView(QTreeWidget):
             
             items = os.listdir(folder_path)
             for item in items:
-                if item == 'manga_translator_work':
-                    continue
-                    
                 item_path = os.path.join(folder_path, item)
                 if os.path.isdir(item_path):
+                    if not self._should_scan_subfolder_name(item):
+                        continue
                     structure['subdirs'].append(item_path)
                 elif os.path.splitext(item)[1].lower() in all_extensions:
                     structure['files'].append(item_path)
@@ -762,9 +805,9 @@ class FileListView(QTreeWidget):
             all_extensions = image_extensions | archive_extensions
             count = 0
             for root, dirs, files in os.walk(folder_path):
-                # 忽略 manga_translator_work 目录
-                if 'manga_translator_work' in dirs:
-                    dirs.remove('manga_translator_work')
+                dirs[:] = [d for d in dirs if d.lower() != 'manga_translator_work']
+                if not self._read_all_subfolders_enabled():
+                    dirs[:] = []
                     
                 for filename in files:
                     if os.path.splitext(filename)[1].lower() in all_extensions:
@@ -788,12 +831,10 @@ class FileListView(QTreeWidget):
             files = []
             
             for item in items:
-                # 忽略 manga_translator_work 目录
-                if item == 'manga_translator_work':
-                    continue
-                    
                 item_path = os.path.join(folder_path, item)
                 if os.path.isdir(item_path):
+                    if not self._should_scan_subfolder_name(item):
+                        continue
                     subdirs.append(item_path)
                 elif os.path.splitext(item)[1].lower() in all_extensions:
                     files.append(item_path)
