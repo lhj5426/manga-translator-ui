@@ -36,3 +36,15 @@ https://github.com/lhj5426/YSG
 <img width="1038" height="357" alt="image" src="https://github.com/user-attachments/assets/c4759b42-94b3-44ba-872d-ac42eeaa2322" />
 
  小众用法 仅供个人使用 
+
+ 并且可以使用
+
+ https://github.com/lhj5426/YSG/blob/main/%E6%BC%AB%E7%94%BB%E8%BD%AF%E4%BB%B6/%E6%8B%96%E6%8B%BDmtuJSON%E6%96%87%E4%BB%B6%E5%A4%B9%E8%BD%ACBallonsTranslator%E5%8D%95JSON%E6%96%87%E4%BB%B6.py
+
+ https://github.com/lhj5426/YSG/blob/main/%E6%BC%AB%E7%94%BB%E8%BD%AF%E4%BB%B6/%E6%8B%96%E6%8B%BDBallonsTranslator%E5%8D%95JSON%E8%BD%ACMTUjson%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E5%A4%B9.py
+
+ 脚本 转换成
+
+ https://github.com/dmMaze/BallonsTranslator
+
+ 可用的格式 实现2个软件的 无缝切换
