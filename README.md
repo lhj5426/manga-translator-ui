@@ -51,7 +51,7 @@ https://github.com/lhj5426/YSG
 
 
 
-
+https://anaconda.org/channels/conda-forge/packages/pydensecrf/overview
 安装
 
 查看现有环境
@@ -65,8 +65,8 @@ conda env list
 conda activate MTUI
 
 安装
-conda install conda-forge::pydensecrf -y
-conda install D:\Ddown\pydensecrf-1.0rc3-py312h72972c8_6.conda
+
+conda install pydensecrf-1.0rc3-py312h72972c8_6.conda
 https://anaconda.org/channels/conda-forge/packages/pydensecrf/overview
 pip uninstall numpy -y
 python -c "import pydensecrf; print('pydensecrf OK')"
