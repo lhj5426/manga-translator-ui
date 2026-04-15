@@ -55,26 +55,42 @@ https://anaconda.org/channels/conda-forge/packages/pydensecrf/overview
 安装
 
 查看现有环境
+
 conda env list
+
 .创建python环境
+
 conda create -n MTUI python=3.12 -y
 
 查看现有环境
+
 conda env list
+
  激活该环境
+ 
 conda activate MTUI
 
 安装
 
 conda install pydensecrf-1.0rc3-py312h72972c8_6.conda
+
 https://anaconda.org/channels/conda-forge/packages/pydensecrf/overview
+
 pip uninstall numpy -y
+
 python -c "import pydensecrf; print('pydensecrf OK')"
 
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
 pip install -r requirements_gpu_cu118.txt
+
 python -c "import numpy; print(numpy.__version__)"
+
 python -c "import numpy; import torch; print(numpy.__version__, torch.__version__)"
+
+
+
 python 检测是否能运行GPU.py
+
 启动
+
 python desktop_qt_ui\main.py
