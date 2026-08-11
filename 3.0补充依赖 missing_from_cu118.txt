@@ -1,0 +1,24 @@
+# ============================================================
+# 在 pyproject.toml 中、但 requirements_gpu_cu118.txt 里缺失的包
+# （cu118 文件里已存在、只是版本较旧的，未列入本表）
+# 用法：进 MT001 后，缺哪个复制哪行。
+# 注意：cu118 文件是旧快照（torch 2.2.2 / CUDA 11.8），
+#       pyproject 当前是 torch 2.13.0 / CUDA 13，版本差异较大，
+#       装完后若运行时报版本不兼容，需整体对齐到同一套版本。
+# ============================================================
+
+# ---------- 必装（pyproject 有，cu118 完全没列）----------
+pip install hanlp==2.1.3
+pip install ijson==3.4.0
+pip install "pythainlp[nlpo3]==5.3.1"
+pip install PyQt6-Fluent-Widgets==1.11.2            # import qfluentwidgets
+pip install "accelerate>=1.12.0"
+pip install opencc-python-reimplemented==0.1.7      # import opencc
+
+# ---------- pydensecrf（cu118 里被注释，需用预编译 wheel，需 Python 3.12）----------
+pip install https://github.com/hgmzhn/manga-translator-ui/releases/download/v1.7.6/pydensecrf-1.0-cp312-cp312-win_amd64.whl
+
+# ---------- 可选：xformers（cu118 里也注释着）----------
+# 必须和 torch 版本匹配；若 cu118 用的是 torch 2.2.2，应装 xformers==0.0.25.post1
+# pip install xformers==0.0.25.post1
+pip install xformers==0.0.35
